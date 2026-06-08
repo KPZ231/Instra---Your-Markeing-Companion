@@ -25,7 +25,6 @@ model User {
   accounts Account[]
   sessions Session[]
 
-  @@index([email])
 }
 
 model Account {

@@ -4,7 +4,8 @@ import { defineConfig } from "prisma/config";
 /**
  * Prisma 7 configuration file.
  * Database connection URL is read from the DATABASE_URL environment variable.
- * Driver adapter (@prisma/adapter-pg) is used for direct PostgreSQL connections.
+ * The @prisma/adapter-pg driver will be configured in lib/prisma.ts when the
+ * Prisma client singleton is set up (Task 4).
  * @see https://www.prisma.io/docs/orm/reference/prisma-config-reference
  */
 export default defineConfig({
