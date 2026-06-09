@@ -10,43 +10,91 @@ import { computeFingerprint, FINGERPRINT_COOKIE_NAME, FINGERPRINT_COOKIE_OPTIONS
 import type { AuthActionState } from '../types'
 
 /**
- * Server Action: registers a new user, creates a session, and sets the fingerprint cookie.
+ * Server Action: registers a new user via email or username mode,
+ * creates a session, and sets the fingerprint cookie.
  * @param state - Previous action state (from useActionState)
- * @param formData - Form fields: name, email, password, confirmPassword
+ * @param formData - Form fields: mode, name?, email?, username?, password, confirmPassword, terms
  */
 export async function registerUser(
   state: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
-  const raw = {
-    name: formData.get('name'),
-    email: formData.get('email'),
-    password: formData.get('password'),
-    confirmPassword: formData.get('confirmPassword'),
-  }
+  const mode = formData.get('mode')
+
+  const raw =
+    mode === 'username'
+      ? {
+          mode: 'username' as const,
+          username: formData.get('username'),
+          email: formData.get('email') || undefined,
+          password: formData.get('password'),
+          confirmPassword: formData.get('confirmPassword'),
+          terms: formData.get('terms'),
+        }
+      : {
+          mode: 'email' as const,
+          name: formData.get('name') || undefined,
+          email: formData.get('email'),
+          password: formData.get('password'),
+          confirmPassword: formData.get('confirmPassword'),
+          terms: formData.get('terms'),
+        }
 
   const parsed = RegisterSchema.safeParse(raw)
   if (!parsed.success) {
-    return { errors: parsed.error.flatten().fieldErrors }
+    return { errors: parsed.error.flatten().fieldErrors as AuthActionState['errors'] }
   }
 
-  const { name, email, password } = parsed.data
-
-  const existingUser = await prisma.user.findUnique({ where: { email } })
-  if (existingUser) {
-    return { errors: { email: ['An account with this email already exists.'] } }
-  }
-
+  const { password } = parsed.data
   const passwordHash = await hashPassword(password)
 
-  await prisma.user.create({
-    data: { name, email, passwordHash },
-  })
+  if (parsed.data.mode === 'email') {
+    const { email, name } = parsed.data
 
-  try {
-    await signIn('credentials', { email, password, redirect: false })
-  } catch {
-    return { errors: { _form: ['Registration succeeded but sign-in failed. Please log in manually.'] } }
+    const existingUser = await prisma.user.findUnique({ where: { email } })
+    if (existingUser) {
+      return { errors: { email: ['An account with this email already exists.'] } }
+    }
+
+    await prisma.user.create({
+      data: { name: name ?? null, email, passwordHash },
+    })
+
+    try {
+      await signIn('credentials', { email, password, redirect: false })
+    } catch {
+      return { errors: { _form: ['Registration succeeded but sign-in failed. Please log in manually.'] } }
+    }
+  } else {
+    const { username, email } = parsed.data
+    const resolvedEmail = email && email.trim() !== '' ? email : null
+
+    if (resolvedEmail) {
+      const existingEmail = await prisma.user.findUnique({ where: { email: resolvedEmail } })
+      if (existingEmail) {
+        return { errors: { email: ['An account with this email already exists.'] } }
+      }
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const existingUsername = await (prisma.user as any).findFirst({ where: { username } })
+    if (existingUsername) {
+      return { errors: { username: ['This username is already taken.'] } }
+    }
+
+    // username field added via migration — types update after `prisma migrate dev`
+    await prisma.user.create({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      data: { username, name: username, email: resolvedEmail, passwordHash } as any,
+    })
+
+    if (resolvedEmail) {
+      try {
+        await signIn('credentials', { email: resolvedEmail, password, redirect: false })
+      } catch {
+        return { errors: { _form: ['Registration succeeded but sign-in failed. Please log in manually.'] } }
+      }
+    }
   }
 
   const ua = (await headers()).get('user-agent') ?? ''

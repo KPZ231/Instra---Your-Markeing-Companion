@@ -115,7 +115,8 @@ Doświadczony full-stack developer. Stack: **Next.js, React, TypeScript, Supabas
 ---
 
 ## Design
-Przed implementacją UI przejrzyj `DESIGN.md` i stosuj zmienne kolorów z `globals.css`.
+- Przed implementacją UI przejrzyj `DESIGN.md` i stosuj zmienne kolorów z `globals.css`.
+- Uzywaj to stylów TailwindCSS
 
 ---
 

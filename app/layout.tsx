@@ -4,6 +4,7 @@ import "./globals.css";
 import I18nProvider from "@/components/providers/I18nProvider";
 import AuthProvider from "@/components/providers/AuthProvider";
 import Navbar from "@/components/ui/Navbar";
+import InstraToaster from "@/components/ui/InstraToaster";
 
 const hankenGrotesk = Hanken_Grotesk({
   variable: "--font-sans",
@@ -34,11 +35,12 @@ export default function RootLayout({
       lang="en"
       className={`${hankenGrotesk.variable} ${jetbrainsMono.variable} h-full`}
     >
-      <body className="min-h-full flex flex-col pt-[73px]">
+      <body className="min-h-full flex flex-col pt-18.25">
         <AuthProvider>
           <I18nProvider>
             <Navbar />
             {children}
+            <InstraToaster />
           </I18nProvider>
         </AuthProvider>
       </body>

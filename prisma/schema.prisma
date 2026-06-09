@@ -13,9 +13,10 @@ enum UserRole {
 
 model User {
   id            String    @id @default(cuid())
-  email         String    @unique
+  email         String?   @unique
   emailVerified DateTime?
   name          String?
+  username      String?   @unique
   passwordHash  String?
   image         String?
   role          UserRole  @default(USER)
@@ -64,4 +65,14 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  email     String
+  tokenHash String   @unique
+  expires   DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
 }
