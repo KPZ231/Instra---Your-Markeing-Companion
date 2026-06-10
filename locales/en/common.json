@@ -111,7 +111,8 @@
         "categories": {
             "general": "General Information",
             "pricing": "Plans and Pricing",
-            "security": "Security and Privacy"
+            "security": "Security and Privacy",
+            "usecase": "Plugins & Workflows"
         },
         "questions": {
             "general": [
@@ -134,6 +135,40 @@
                 {
                     "q": "Is my data secure?",
                     "a": "Absolutely. We employ AES-256 encryption at rest and TLS 1.3 for all data in transit."
+                }
+            ],
+            "usecase": [
+                {
+                    "q": "What plugins are available on the free plan?",
+                    "a": "The free open-core plan includes all community plugins and core platform capabilities. Pro plugins — advanced automations, priority integrations, enterprise connectors — activate on any paid plan."
+                },
+                {
+                    "q": "How do I install a plugin?",
+                    "a": "Go to the Plugin Registry in your Instra dashboard, click Install on any listed plugin, and it loads into your workspace immediately. No restart or configuration required."
+                },
+                {
+                    "q": "Can I connect my existing marketing tools?",
+                    "a": "Yes. Instra integrates with HubSpot, Mailchimp, Google Analytics, Meta Ads, Slack, and dozens more via scoped OAuth — plugins only access what they need."
+                },
+                {
+                    "q": "What developer tools are supported?",
+                    "a": "The plugin ecosystem supports GitHub, Jira, Vercel, Supabase, Stripe, and more. Dev-focused plugins enable webhook triggers, CI/CD hooks, and custom event pipelines."
+                },
+                {
+                    "q": "Is the plugin system really open source?",
+                    "a": "Yes. The core platform is MIT-licensed and the plugin API is fully open. Any developer can build and submit plugins via a pull request or npm under @instra scope."
+                },
+                {
+                    "q": "How are plugins sandboxed?",
+                    "a": "Plugins communicate exclusively through the PluginContext API — no direct database or env access. Every plugin action is logged to an audit trail."
+                },
+                {
+                    "q": "Can I build a custom private plugin?",
+                    "a": "Absolutely. Private plugins stay within your workspace and are never published to the registry. Write them in TypeScript following the InstraPlugin interface."
+                },
+                {
+                    "q": "What happens if a plugin breaks?",
+                    "a": "Each plugin slot is wrapped in an ErrorBoundary. A failing plugin is isolated and shows an error state — it never crashes the rest of your workspace."
                 }
             ]
         },
@@ -597,5 +632,78 @@
                 "description": "Plan, execute, and measure full marketing campaigns end-to-end — from brief to report."
             }
         ]
+    },
+    "usecaseHeader": {
+        "label": "// REAL-WORLD APPLICATIONS",
+        "heading": "One Platform.\nEvery Workflow.",
+        "description": "Marketers and developers use Instra's plugin ecosystem to eliminate context-switching and build unified, automated workflows."
+    },
+    "usecaseProblem": {
+        "badge": "// THE PROBLEM",
+        "heading": "Your tools don't\ntalk to each other.",
+        "items": [
+            {
+                "title": "Constant context-switching",
+                "body": "Teams jump between 8–12 tools daily. Every switch kills focus and burns time that should go toward actual work."
+            },
+            {
+                "title": "Data trapped in silos",
+                "body": "Analytics live in one tab, CRM in another, comms in a third. Nothing connects, so nothing compounds."
+            },
+            {
+                "title": "Integration tax",
+                "body": "Every new tool means a new manual process or a fragile automation chain. The stack grows; the productivity doesn't."
+            }
+        ]
+    },
+    "usecaseHowItWorks": {
+        "badge": "// HOW IT WORKS",
+        "heading": "Simple by design.\nPowerful by default.",
+        "steps": [
+            {
+                "title": "Choose a plugin",
+                "body": "Browse the open registry. Filter by category, compatibility, or team rating. Preview before installing."
+            },
+            {
+                "title": "Install in one click",
+                "body": "Plugins load into your workspace instantly. No configuration files, no CLI, no restart required."
+            },
+            {
+                "title": "Connect your tools",
+                "body": "Authorize integrations via OAuth or API key. Permissions are scoped — plugins only access what they need."
+            },
+            {
+                "title": "Automate your workflow",
+                "body": "Trigger actions across tools using plugin events. Set it once, let it run. Audit every action in the log."
+            }
+        ]
+    },
+    "usecaseWorkflow": {
+        "badge": "// YOUR WORKFLOW",
+        "heading": "From setup to\nautomation in minutes.",
+        "steps": [
+            {
+                "title": "Choose",
+                "body": "Pick from 40+ community and premium plugins in the registry."
+            },
+            {
+                "title": "Install",
+                "body": "One-click install directly into your Instra workspace."
+            },
+            {
+                "title": "Connect",
+                "body": "Authorize your existing tools with scoped OAuth permissions."
+            },
+            {
+                "title": "Automate",
+                "body": "Configure triggers and let your workflow run hands-free."
+            }
+        ]
+    },
+    "usecaseIntegrations": {
+        "badge": "// INTEGRATIONS",
+        "heading": "Works with the tools\nyou already use.",
+        "subtitle": "Connect marketing platforms and dev tools without writing a single line of glue code.",
+        "moreLabel": "+ 120 more integrations"
     }
 }

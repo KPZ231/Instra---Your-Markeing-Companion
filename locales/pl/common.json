@@ -111,7 +111,8 @@
         "categories": {
             "general": "Informacje Ogólne",
             "pricing": "Plany i Cennik",
-            "security": "Bezpieczeństwo i Prywatność"
+            "security": "Bezpieczeństwo i Prywatność",
+            "usecase": "Pluginy i Workflow"
         },
         "questions": {
             "general": [
@@ -134,6 +135,40 @@
                 {
                     "q": "Czy moje dane są bezpieczne?",
                     "a": "Zdecydowanie. Stosujemy szyfrowanie AES-256 dla danych w spoczynku i TLS 1.3 dla wszystkich danych przesyłanych."
+                }
+            ],
+            "usecase": [
+                {
+                    "q": "Jakie pluginy są dostępne w darmowym planie?",
+                    "a": "Darmowy plan open-core zawiera wszystkie pluginy społecznościowe i podstawowe możliwości platformy. Pluginy Pro aktywują się na każdym płatnym planie."
+                },
+                {
+                    "q": "Jak zainstalować plugin?",
+                    "a": "Przejdź do Rejestru Pluginów w dashboardzie Instra, kliknij Zainstaluj przy wybranym pluginie — ładuje się natychmiast. Bez restartu ani konfiguracji."
+                },
+                {
+                    "q": "Czy mogę połączyć swoje narzędzia marketingowe?",
+                    "a": "Tak. Instra integruje się z HubSpot, Mailchimp, Google Analytics, Meta Ads, Slack i dziesiątkami innych przez OAuth z ograniczonymi uprawnieniami."
+                },
+                {
+                    "q": "Jakie narzędzia deweloperskie są obsługiwane?",
+                    "a": "Ekosystem pluginów obsługuje GitHub, Jira, Vercel, Supabase, Stripe i więcej. Pluginy deweloperskie umożliwiają triggery webhook, hooki CI/CD i niestandardowe pipelines zdarzeń."
+                },
+                {
+                    "q": "Czy system pluginów jest naprawdę open source?",
+                    "a": "Tak. Rdzeń platformy jest na licencji MIT, a API pluginów jest w pełni otwarte. Każdy deweloper może budować i publikować pluginy przez pull request lub npm pod @instra."
+                },
+                {
+                    "q": "Jak pluginy są izolowane?",
+                    "a": "Pluginy komunikują się wyłącznie przez PluginContext API — brak dostępu do bazy danych ani zmiennych środowiskowych. Każda akcja pluginu jest zapisywana w logu audytu."
+                },
+                {
+                    "q": "Czy mogę zbudować własny prywatny plugin?",
+                    "a": "Oczywiście. Prywatne pluginy zostają w Twoim workspace i nigdy nie są publikowane w rejestrze. Napisz je w TypeScript zgodnie z interfejsem InstraPlugin."
+                },
+                {
+                    "q": "Co się stanie jeśli plugin przestanie działać?",
+                    "a": "Każdy slot pluginu jest opakowany w ErrorBoundary. Wadliwy plugin jest izolowany i pokazuje stan błędu — nigdy nie crashuje reszty workspace'u."
                 }
             ]
         },
@@ -597,5 +632,78 @@
                 "description": "Planuj, realizuj i mierz pełne kampanie marketingowe od briefu do raportu."
             }
         ]
+    },
+    "usecaseHeader": {
+        "label": "// ZASTOSOWANIA W PRAKTYCE",
+        "heading": "Jedna platforma.\nKażdy workflow.",
+        "description": "Marketerzy i deweloperzy używają ekosystemu pluginów Instra, by wyeliminować przełączanie kontekstu i budować zunifikowane, zautomatyzowane procesy."
+    },
+    "usecaseProblem": {
+        "badge": "// PROBLEM",
+        "heading": "Twoje narzędzia\nnie rozmawiają ze sobą.",
+        "items": [
+            {
+                "title": "Ciągłe przełączanie kontekstu",
+                "body": "Zespoły przeskakują między 8–12 narzędziami dziennie. Każde przełączenie niszczy skupienie i marnuje czas."
+            },
+            {
+                "title": "Dane uwięzione w silosach",
+                "body": "Analityka w jednej zakładce, CRM w drugiej, komunikacja w trzeciej. Nic się nie łączy, nic nie kumuluje."
+            },
+            {
+                "title": "Podatek integracyjny",
+                "body": "Każde nowe narzędzie to nowy ręczny proces lub kruchy łańcuch automatyzacji. Stack rośnie, produktywność nie."
+            }
+        ]
+    },
+    "usecaseHowItWorks": {
+        "badge": "// JAK TO DZIAŁA",
+        "heading": "Proste z założenia.\nPotężne z natury.",
+        "steps": [
+            {
+                "title": "Wybierz plugin",
+                "body": "Przeglądaj otwarty rejestr. Filtruj po kategorii, kompatybilności lub ocenie. Podgląd przed instalacją."
+            },
+            {
+                "title": "Zainstaluj jednym kliknięciem",
+                "body": "Pluginy ładują się do workspace'u natychmiast. Bez plików konfiguracyjnych, bez CLI, bez restartu."
+            },
+            {
+                "title": "Połącz swoje narzędzia",
+                "body": "Autoryzuj integracje przez OAuth lub klucz API. Uprawnienia są ograniczone — pluginy dostają tylko co potrzebują."
+            },
+            {
+                "title": "Zautomatyzuj workflow",
+                "body": "Wyzwalaj akcje w narzędziach używając zdarzeń pluginu. Ustaw raz, niech działa. Audytuj każdą akcję."
+            }
+        ]
+    },
+    "usecaseWorkflow": {
+        "badge": "// TWÓJ WORKFLOW",
+        "heading": "Od konfiguracji do\nautomatyzacji w minuty.",
+        "steps": [
+            {
+                "title": "Wybierz",
+                "body": "Wybierz spośród 40+ pluginów społecznościowych i premium w rejestrze."
+            },
+            {
+                "title": "Zainstaluj",
+                "body": "Instalacja jednym kliknięciem bezpośrednio w Twoim workspace Instra."
+            },
+            {
+                "title": "Połącz",
+                "body": "Autoryzuj istniejące narzędzia z uprawnieniami OAuth."
+            },
+            {
+                "title": "Automatyzuj",
+                "body": "Skonfiguruj wyzwalacze i pozwól workflow działać bez nadzoru."
+            }
+        ]
+    },
+    "usecaseIntegrations": {
+        "badge": "// INTEGRACJE",
+        "heading": "Działa z narzędziami,\nktórych już używasz.",
+        "subtitle": "Połącz platformy marketingowe i narzędzia deweloperskie bez pisania ani jednej linii kodu kleju.",
+        "moreLabel": "+ 120 kolejnych integracji"
     }
 }
