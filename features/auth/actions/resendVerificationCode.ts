@@ -40,8 +40,12 @@ export async function resendVerificationCode(
   const secondsSinceLastSent = (Date.now() - pending.lastSentAt.getTime()) / 1000
 
   if (secondsSinceLastSent < 60) {
-    const secondsRemaining = Math.ceil(60 - secondsSinceLastSent)
-    return { errors: { _form: [`Please wait ${secondsRemaining} seconds before requesting a new code.`] } }
+    // Return the same generic response to prevent enumeration — attacker can't distinguish
+    // "no record" from "record exists but in cooldown" via the response.
+    return {
+      success: true,
+      message: 'If a pending registration exists for this address, a new code has been sent.',
+    }
   }
 
   const newCode = generateVerificationCode()
