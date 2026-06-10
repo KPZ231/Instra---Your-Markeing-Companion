@@ -10,6 +10,7 @@
         "dashboard": "Panel",
         "profile": "Profil",
         "signout": "Wyloguj się",
+        "plugins": "Pluginy",
         "menu_open": "Otwórz menu",
         "menu_close": "Zamknij menu"
     },
@@ -475,5 +476,109 @@
                 ]
             }
         }
+    },
+    "featuresHeader": {
+        "label": "// KLUCZOWE MOŻLIWOŚCI",
+        "heading": "Stworzone by\nDziałać",
+        "description": "Wszystko, czego potrzebuje Twój zespół marketingowy — treści AI, harmonogramowanie, analityka i otwarty system pluginów — w jednej platformie."
+    },
+    "featuresHero": {
+        "badge": "MOŻLIWOŚCI — Co potrafi Instra",
+        "heading_line1": "STWORZONE BY",
+        "heading_line2": "DZIAŁAĆ",
+        "block1": {
+            "label": "// 01 — INTELIGENCJA",
+            "body1": "Instra łączy tworzenie treści oparte na AI, harmonogramowanie wieloplatformowe i zaawansowaną analitykę w jednym przepływie pracy. Przestań przełączać się między narzędziami — każda potrzebna możliwość jest tutaj.",
+            "body2": "Od pierwszego szkicu do opublikowanego posta — Instra przejmuje ciężką pracę, aby Twój zespół mógł skupić się na strategii, kreatywności i wzroście."
+        },
+        "block2": {
+            "label": "// 02 — ROZSZERZALNOŚĆ",
+            "body": "Każda funkcja w Instra to fundament, nie sufit. Otwarty system pluginów pozwala rozszerzać, integrować i automatyzować poza możliwościami zamkniętych platform. Wdrażaj własne przepływy pracy w godzinach, nie sprintach."
+        },
+        "stats": {
+            "aria_label": "Statystyki funkcji Instra"
+        },
+        "stat1": {
+            "value": "6+",
+            "label": "Kluczowych Funkcji"
+        },
+        "stat2": {
+            "value": "40+",
+            "label": "Dostępnych Pluginów"
+        },
+        "stat3": {
+            "value": "3×",
+            "label": "Szybsza Publikacja"
+        }
+    },
+    "openSourcePlugins": {
+        "label": "// OPEN SOURCE",
+        "heading": "Zbuduj własny\nplugin",
+        "body": "System pluginów Instra jest w pełni otwarty. Każdy developer może rozszerzyć platformę — dodawać widżety, rejestrować trasy, nasłuchiwać zdarzeń i publikować w rejestrze społeczności. Zero gatekeepingu.",
+        "ctaTagline": "Pełna dokumentacja API, schemat manifestu i przykładowe pluginy dostępne są w dokumentacji.",
+        "docsButton": "Przejdź do dokumentacji",
+        "githubButton": "GitHub",
+        "githubAriaLabel": "Zobacz Instra na GitHub (otwiera nową kartę)",
+        "steps": [
+            {
+                "icon": "code",
+                "title": "Napisz swój plugin",
+                "description": "Utwórz index.ts z eksportem InstraPlugin. Zaimplementuj init(ctx), aby rejestrować widżety, trasy lub nasłuchy zdarzeń przez API PluginContext."
+            },
+            {
+                "icon": "package",
+                "title": "Dodaj manifest",
+                "description": "Zadeklaruj nazwę, wersję, uprawnienia i autora w manifest.json. Manifest jest walidowany wobec JSON Schema przed załadowaniem pluginu."
+            },
+            {
+                "icon": "send",
+                "title": "Opublikuj w rejestrze",
+                "description": "Wyślij pull request lub opublikuj przez npm w zakresie @instra. Pluginy społeczności przechodzą przegląd bezpieczeństwa przed pojawieniem się w marketplace."
+            }
+        ]
+    },
+    "featuresSection": {
+        "label": "// KLUCZOWE MOŻLIWOŚCI",
+        "heading": "Wszystko, czego potrzebujesz do rozwoju",
+        "features": [
+            {
+                "id": "ai-content",
+                "icon": "✦",
+                "title": "Generowanie treści AI",
+                "description": "Twórz posty, podpisy i teksty reklamowe w kilka sekund. Instra uczy się Twojego głosu i skaluje go na każdym kanale.",
+                "image": "/images/features/ai-content.png"
+            },
+            {
+                "id": "scheduling",
+                "icon": "◈",
+                "title": "Harmonogramowanie multi-platforma",
+                "description": "Kolejkuj i publikuj treści na Instagramie, LinkedIn i X z jednego zunifikowanego kalendarza.",
+                "image": "/images/features/scheduling.png"
+            },
+            {
+                "id": "analytics",
+                "icon": "▦",
+                "title": "Panel analityczny",
+                "description": "Śledź zasięg, zaangażowanie i konwersje w jednym widoku. Dane w czasie rzeczywistym, zero arkuszy."
+            },
+            {
+                "id": "plugins",
+                "icon": "⬡",
+                "title": "Ekosystem pluginów",
+                "description": "Rozszerzaj Instra o pluginy tworzone przez społeczność lub własne. Open-core oznacza, że masz pełną kontrolę."
+            },
+            {
+                "id": "brand-voice",
+                "icon": "◎",
+                "title": "Profile głosu marki",
+                "description": "Zapisuj ton, styl i wytyczne dla każdej marki. Przełączaj konteksty natychmiastowo bez utraty spójności."
+            },
+            {
+                "id": "campaigns",
+                "icon": "◻",
+                "title": "Menedżer kampanii",
+                "description": "Planuj, realizuj i mierz pełne kampanie marketingowe od briefu do raportu."
+            }
+        ]
     }
 }

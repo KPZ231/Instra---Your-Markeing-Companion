@@ -20,8 +20,10 @@ if (!i18n.isInitialized) {
     fallbackLng: defaultLocale,
     defaultNS: "common",
     ns: ["common"],
+    // Synchronous init — resources are bundled statically so no async fetch needed.
+    // Without this, components render before init resolves and receive raw keys.
+    initImmediate: false,
     interpolation: {
-      // React already escapes values — no double-escaping needed
       escapeValue: false,
     },
     react: {

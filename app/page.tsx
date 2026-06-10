@@ -1,9 +1,13 @@
+import type { Metadata } from "next";
+import { buildMetadata, pageMetadata } from "@/lib/seo/metadata";
 import AboutProject from "@/components/ui/AboutProject";
 import Hero from "@/components/ui/Hero";
 import Marquee, { Testimonial } from "@/components/ui/Marquee";
 import CTA from "@/components/ui/CTA";
 import FAQ from "@/components/ui/FAQ";
 import PricingPlans from "@/components/ui/PricingPlans";
+
+export const metadata: Metadata = buildMetadata(pageMetadata.home);
 
 
 const testimonials: Testimonial[] = [

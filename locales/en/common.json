@@ -10,6 +10,7 @@
         "dashboard": "Dashboard",
         "profile": "Profile",
         "signout": "Sign Out",
+        "plugins": "Plugins",
         "menu_open": "Open menu",
         "menu_close": "Close menu"
     },
@@ -475,5 +476,109 @@
                 ]
             }
         }
+    },
+    "featuresHeader": {
+        "label": "// CORE CAPABILITIES",
+        "heading": "Built to\nPerform",
+        "description": "Everything your marketing team needs — AI content, scheduling, analytics, and an open plugin layer — unified in a single platform."
+    },
+    "featuresHero": {
+        "badge": "CAPABILITIES — What Instra does",
+        "heading_line1": "BUILT TO",
+        "heading_line2": "PERFORM",
+        "block1": {
+            "label": "// 01 — INTELLIGENCE",
+            "body1": "Instra brings together AI-powered content creation, cross-platform scheduling, and deep analytics in a single workflow. Stop switching between tools — every capability you need is right here.",
+            "body2": "From first draft to published post, Instra handles the heavy lifting so your team can focus on strategy, creativity, and growth."
+        },
+        "block2": {
+            "label": "// 02 — EXTENSIBILITY",
+            "body": "Every feature in Instra is a foundation, not a ceiling. The open plugin system lets you extend, integrate, and automate beyond what any closed platform can offer. Ship custom workflows in hours, not sprints."
+        },
+        "stats": {
+            "aria_label": "Instra feature statistics"
+        },
+        "stat1": {
+            "value": "6+",
+            "label": "Core Features"
+        },
+        "stat2": {
+            "value": "40+",
+            "label": "Available Plugins"
+        },
+        "stat3": {
+            "value": "3×",
+            "label": "Faster Publishing"
+        }
+    },
+    "openSourcePlugins": {
+        "label": "// OPEN SOURCE",
+        "heading": "Build your own\nplugin",
+        "body": "Instra's plugin system is fully open. Any developer can extend the platform — add widgets, register routes, hook into events, and publish to the community registry. Zero gatekeeping.",
+        "ctaTagline": "Full API reference, manifest schema, and example plugins are available in the documentation.",
+        "docsButton": "Go to Docs",
+        "githubButton": "GitHub",
+        "githubAriaLabel": "View Instra on GitHub (opens in new tab)",
+        "steps": [
+            {
+                "icon": "code",
+                "title": "Write your plugin",
+                "description": "Create index.ts with an InstraPlugin export. Implement init(ctx) to register widgets, routes, or event listeners via the PluginContext API."
+            },
+            {
+                "icon": "package",
+                "title": "Add a manifest",
+                "description": "Declare name, version, permissions, and author in manifest.json. The manifest is validated against a JSON Schema before your plugin loads."
+            },
+            {
+                "icon": "send",
+                "title": "Publish to the registry",
+                "description": "Submit a pull request or publish via npm under the @instra scope. Community plugins are reviewed for security before appearing in the marketplace."
+            }
+        ]
+    },
+    "featuresSection": {
+        "label": "// CORE CAPABILITIES",
+        "heading": "Everything you need to grow",
+        "features": [
+            {
+                "id": "ai-content",
+                "icon": "✦",
+                "title": "AI Content Generation",
+                "description": "Create on-brand posts, captions, and ad copy in seconds. Instra learns your voice and scales it across every channel.",
+                "image": "/images/features/ai-content.png"
+            },
+            {
+                "id": "scheduling",
+                "icon": "◈",
+                "title": "Multi-Platform Scheduling",
+                "description": "Queue and publish content across Instagram, LinkedIn, and X from a single unified calendar.",
+                "image": "/images/features/scheduling.png"
+            },
+            {
+                "id": "analytics",
+                "icon": "▦",
+                "title": "Analytics Dashboard",
+                "description": "Track reach, engagement, and conversions in one view. Real-time data, zero spreadsheets."
+            },
+            {
+                "id": "plugins",
+                "icon": "⬡",
+                "title": "Plugin Ecosystem",
+                "description": "Extend Instra with community-built or custom plugins. Open-core means you own the integration layer."
+            },
+            {
+                "id": "brand-voice",
+                "icon": "◎",
+                "title": "Brand Voice Profiles",
+                "description": "Save tone, style, and guidelines per brand. Switch contexts instantly without losing consistency."
+            },
+            {
+                "id": "campaigns",
+                "icon": "◻",
+                "title": "Campaign Manager",
+                "description": "Plan, execute, and measure full marketing campaigns end-to-end — from brief to report."
+            }
+        ]
     }
 }

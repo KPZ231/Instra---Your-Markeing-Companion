@@ -32,10 +32,11 @@ export default function Navbar() {
   const authState: AuthState = status;
 
   const navLinks = [
-    { name: t("nav.about"),    href: "/about"    },
+    { name: t("nav.about"), href: "/about" },
     { name: t("nav.features"), href: "/features" },
-    { name: t("nav.usecases"), href: "/usecase"  },
-    { name: t("nav.docs"),     href: "/docs"     },
+    { name: t("nav.usecases"), href: "/usecase" },
+    { name: t("nav.docs"), href: "/docs" },
+    { name: t("nav.plugins"), href: "/plugins" },
   ];
 
   useMotionValueEvent(scrollY, "change", (current) => {

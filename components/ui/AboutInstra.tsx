@@ -176,19 +176,32 @@ function VisualBlock({
   );
 }
 
+/* ── Props ────────────────────────────────────────────────────── */
+
+interface AboutInstraProps {
+  /** i18n key prefix. All keys are resolved as `${i18nPrefix}.*`.
+   *  Defaults to "aboutInstra" — the About page content.
+   *  Pass a different prefix (e.g. "featuresHero") to reuse this layout
+   *  with page-specific copy without duplicating markup.
+   */
+  i18nPrefix?: string;
+}
+
 /* ── Main component ───────────────────────────────────────────── */
 
 /**
- * AboutInstra section component.
- * Displays a split editorial layout describing Instra's identity,
- * platform philosophy, and key metrics — styled to the Executive Precision
- * design system with framer-motion scroll animations.
+ * Reusable editorial hero layout — split blocks, animated heading, stats row.
+ * Content is fully driven by i18n using the provided `i18nPrefix`.
  *
+ * @param i18nPrefix - i18n key namespace (default: "aboutInstra")
  * @example
  * <AboutInstra />
+ * <AboutInstra i18nPrefix="featuresHero" />
  */
-export default function AboutInstra() {
+export default function AboutInstra({ i18nPrefix = "aboutInstra" }: AboutInstraProps) {
   const { t } = useTranslation();
+  /** Shorthand: resolves a key within the current prefix namespace. */
+  const p = (key: string) => t(`${i18nPrefix}.${key}`);
 
   const statsRef = useRef<HTMLDivElement>(null);
   const statsInView = useInView(statsRef, { once: true, margin: "-60px" });
@@ -208,7 +221,7 @@ export default function AboutInstra() {
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: "easeOut" as const }}
         >
-          {t("aboutInstra.badge")}
+          {p("badge")}
         </motion.p>
 
         {/* Giant display title */}
@@ -216,9 +229,9 @@ export default function AboutInstra() {
           id="about-instra-heading"
           className="font-sans font-semibold text-[clamp(56px,10vw,140px)] leading-none tracking-[-0.04em] text-primary uppercase select-none"
         >
-          <AnimatedHeading text={t("aboutInstra.heading_line1")} />
+          <AnimatedHeading text={p("heading_line1")} />
           <br />
-          <AnimatedHeading text={t("aboutInstra.heading_line2")} />
+          <AnimatedHeading text={p("heading_line2")} />
         </h2>
       </div>
 
@@ -244,15 +257,15 @@ export default function AboutInstra() {
           viewport={{ once: true, margin: "-60px" }}
         >
           <span className="font-mono text-[11px] tracking-[0.16em] text-on-surface-variant uppercase">
-            {t("aboutInstra.block1.label")}
+            {p("block1.label")}
           </span>
 
           <p className="font-sans text-base md:text-lg leading-[1.75] text-accent-bone text-balance">
-            {t("aboutInstra.block1.body1")}
+            {p("block1.body1")}
           </p>
 
           <p className="font-sans text-base leading-[1.75] text-on-surface-variant text-balance">
-            {t("aboutInstra.block1.body2")}
+            {p("block1.body2")}
           </p>
 
           {/* Decorative rule */}
@@ -271,11 +284,11 @@ export default function AboutInstra() {
           viewport={{ once: true, margin: "-60px" }}
         >
           <span className="font-mono text-[11px] tracking-[0.16em] text-on-surface-variant uppercase">
-            {t("aboutInstra.block2.label")}
+            {p("block2.label")}
           </span>
 
           <p className="font-sans text-base md:text-lg leading-[1.75] text-accent-bone text-balance">
-            {t("aboutInstra.block2.body")}
+            {p("block2.body")}
           </p>
 
           {/* Decorative rule */}
@@ -299,26 +312,26 @@ export default function AboutInstra() {
         ref={statsRef}
         className="grid grid-cols-1 sm:grid-cols-3"
         role="list"
-        aria-label={t("aboutInstra.stats.aria_label")}
+        aria-label={p("stats.aria_label")}
       >
         {(
           [
             {
               key: "stat1",
-              value: t("aboutInstra.stat1.value"),
-              label: t("aboutInstra.stat1.label"),
+              value: p("stat1.value"),
+              label: p("stat1.label"),
               delay: 0,
             },
             {
               key: "stat2",
-              value: t("aboutInstra.stat2.value"),
-              label: t("aboutInstra.stat2.label"),
+              value: p("stat2.value"),
+              label: p("stat2.label"),
               delay: 0.1,
             },
             {
               key: "stat3",
-              value: t("aboutInstra.stat3.value"),
-              label: t("aboutInstra.stat3.label"),
+              value: p("stat3.value"),
+              label: p("stat3.label"),
               delay: 0.2,
             },
           ] as const

@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
+import { buildMetadata, pageMetadata } from "@/lib/seo/metadata";
 import { getDocsTree } from "@/lib/api/docs";
 import DocsSidebar from "@/components/docs/DocsSidebar";
 
-export const metadata: Metadata = {
-  title: "Documentation — Instra",
-  description: "Instra technical documentation: auth, database, i18n, architecture, and more.",
-};
+export const metadata: Metadata = buildMetadata(pageMetadata.docs);
 
 /**
  * Two-column docs layout: sticky sidebar on the left, scrollable content on the right.
