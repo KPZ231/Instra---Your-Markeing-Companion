@@ -9,18 +9,8 @@ import { signIn } from '@/lib/auth/config'
 import { computeFingerprint, FINGERPRINT_COOKIE_NAME, FINGERPRINT_COOKIE_OPTIONS } from '@/lib/auth/session'
 import { sendMail } from '@/lib/email/mailer'
 import { buildVerifyEmail, buildVerifyEmailText } from '@/lib/email/templates/verifyEmail'
+import { generateVerificationCode } from '@/lib/auth/generateVerificationCode'
 import type { AuthActionState } from '../types'
-
-/**
- * Generates a cryptographically random 6-digit verification code (100000–999999).
- * @returns 6-digit numeric code as a string
- */
-function generateVerificationCode(): string {
-  const array = new Uint32Array(1)
-  crypto.getRandomValues(array)
-  const code = 100000 + (array[0] % 900000)
-  return String(code)
-}
 
 /**
  * Server Action: registers a new user.
@@ -30,6 +20,7 @@ function generateVerificationCode(): string {
  *   and signs the user in immediately.
  * @param state - Previous action state (from useActionState)
  * @param formData - Form fields: mode, name?, email?, username?, password, confirmPassword, terms
+ * @returns AuthActionState with field errors, or redirects on success
  */
 export async function registerUser(
   state: AuthActionState,
@@ -62,7 +53,6 @@ export async function registerUser(
   }
 
   const { password } = parsed.data
-  const passwordHash = await hashPassword(password)
 
   if (parsed.data.mode === 'email') {
     const { email, name } = parsed.data
@@ -73,27 +63,61 @@ export async function registerUser(
       return { errors: { email: ['An account with this email already exists.'] } }
     }
 
-    const code = generateVerificationCode()
-    const now = new Date()
-    const expiresAt = new Date(now.getTime() + 10 * 60 * 1000)
+    const existing = await prisma.pendingRegistration.findUnique({ where: { email } })
 
-    // Upsert so re-registering with the same email before verification just overwrites
-    await prisma.pendingRegistration.upsert({
-      where: { email },
-      update: { passwordHash, name: name ?? null, code, expiresAt, lastSentAt: now },
-      create: { email, passwordHash, name: name ?? null, code, expiresAt, lastSentAt: now },
-    })
+    if (existing) {
+      const secondsSince = (Date.now() - existing.lastSentAt.getTime()) / 1000
+      if (secondsSince < 60) {
+        // Cooldown active — do not reveal that a record exists; just tell them to check their inbox
+        return { errors: { email: ['A verification code was already sent. Check your email.'] } }
+      }
+      // Outside cooldown: only refresh the code — never overwrite passwordHash or name
+      const code = generateVerificationCode()
+      const now = new Date()
+      const expiresAt = new Date(now.getTime() + 10 * 60 * 1000)
 
-    await sendMail({
-      to: email,
-      subject: 'Verify your Instra email address',
-      html: buildVerifyEmail({ code }),
-      text: buildVerifyEmailText(code),
-    })
+      try {
+        await sendMail({
+          to: email,
+          subject: 'Verify your Instra email address',
+          html: buildVerifyEmail({ code }),
+          text: buildVerifyEmailText(code),
+        })
+      } catch {
+        return { errors: { _form: ['Failed to send verification email. Please try again.'] } }
+      }
+
+      await prisma.pendingRegistration.update({
+        where: { email },
+        data: { code, expiresAt, lastSentAt: now },
+      })
+    } else {
+      // New registration: hash password, create pending record, send code
+      const passwordHash = await hashPassword(password)
+      const code = generateVerificationCode()
+      const now = new Date()
+      const expiresAt = new Date(now.getTime() + 10 * 60 * 1000)
+
+      try {
+        await sendMail({
+          to: email,
+          subject: 'Verify your Instra email address',
+          html: buildVerifyEmail({ code }),
+          text: buildVerifyEmailText(code),
+        })
+      } catch {
+        return { errors: { _form: ['Failed to send verification email. Please try again.'] } }
+      }
+
+      await prisma.pendingRegistration.create({
+        data: { email, passwordHash, name: name ?? null, code, expiresAt, lastSentAt: now, attempts: 0 },
+      })
+    }
 
     redirect(`/verify-email?email=${encodeURIComponent(email)}`)
   } else {
     // Username mode — create user directly, no email verification
+    const passwordHash = await hashPassword(password)
     const { username, email } = parsed.data
     const resolvedEmail = email && email.trim() !== '' ? email : null
 

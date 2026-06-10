@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useEffect, useRef, useState } from 'react'
+import { useActionState, useEffect, useRef, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import Image from 'next/image'
@@ -13,13 +13,10 @@ import type { AuthActionState } from '@/features/auth/types'
 const initialState: AuthActionState = { errors: {} }
 
 /**
- * VerifyEmailPage — prompts the user to enter the 6-digit verification code
- * sent to their email during registration. Matches the Executive Precision
- * dark design system used across the auth flow.
- * @returns JSX.Element
- * @example <VerifyEmailPage />
+ * Inner form component that reads the email from search params.
+ * Must be wrapped in <Suspense> because useSearchParams() requires it in Next.js 15.
  */
-export default function VerifyEmailPage() {
+function VerifyEmailForm() {
   const { t } = useTranslation('common')
   const searchParams = useSearchParams()
   const email = searchParams.get('email') ?? ''
@@ -134,124 +131,152 @@ export default function VerifyEmailPage() {
   const hasCodeError = !!(verifyState.errors?.code?.length || verifyState.errors?._form?.length)
 
   return (
+    <div className="w-full max-w-[380px]">
+
+      {/* Logo */}
+      <div className="mb-8 flex items-center">
+        <Image
+          src="/images/logos/logo_white_No_Subtitle_Transparent_Wide.png"
+          alt="Instra"
+          width={120}
+          height={40}
+          priority
+          className="object-contain object-left"
+        />
+      </div>
+
+      {/* Heading */}
+      <h1 className="mb-2 text-[32px] font-semibold leading-[1.1] tracking-[-0.03em] text-white max-[480px]:text-[26px]">
+        {t('verify_email.title')}
+      </h1>
+      <p className="mb-1 text-[13px] text-outline">
+        {t('verify_email.subtitle')}
+      </p>
+      {email && (
+        <p className="mb-6 font-mono text-[12px] text-on-surface">
+          {email}
+        </p>
+      )}
+
+      {/* Code form */}
+      <form
+        action={verifyAction}
+        className="flex flex-col gap-5"
+        noValidate
+      >
+        <input type="hidden" name="email" value={email} />
+        <input type="hidden" name="code" value={code} />
+
+        {/* 6-digit boxes */}
+        <div className="flex flex-col gap-1.5">
+          <label className="font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-outline">
+            {t('verify_email.code_label')}
+          </label>
+          <div className="flex gap-2" role="group" aria-label={t('verify_email.code_label')}>
+            {digits.map((digit, i) => (
+              <input
+                key={i}
+                ref={(el) => { digitRefs.current[i] = el }}
+                type="text"
+                inputMode="numeric"
+                maxLength={1}
+                value={digit}
+                onChange={(e) => handleDigitChange(i, e.target.value)}
+                onKeyDown={(e) => handleDigitKeyDown(i, e)}
+                onPaste={handlePaste}
+                className={inputClass(hasCodeError)}
+                aria-label={`${t('verify_email.code_label')} digit ${i + 1}`}
+                autoComplete={i === 0 ? 'one-time-code' : 'off'}
+              />
+            ))}
+          </div>
+          {verifyState.errors?.code && (
+            <p className="font-mono text-[11px] tracking-[0.03em] text-error">
+              {verifyState.errors.code[0]}
+            </p>
+          )}
+          {verifyState.errors?._form && (
+            <p className="font-mono text-[11px] tracking-[0.03em] text-error">
+              {verifyState.errors._form[0]}
+            </p>
+          )}
+        </div>
+
+        {/* Submit */}
+        <button
+          type="submit"
+          disabled={isVerifying || code.length < 6}
+          className="flex w-full items-center justify-center gap-2 rounded bg-white px-6 py-3 text-sm font-semibold tracking-[-0.01em] text-[#111] transition-[opacity,transform] duration-150 hover:not-disabled:opacity-90 active:not-disabled:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {isVerifying && (
+            <span className="size-3.5 animate-spin rounded-full border-2 border-[rgba(0,0,0,0.2)] border-t-[#111]" aria-hidden="true" />
+          )}
+          {t('verify_email.submit')}
+        </button>
+      </form>
+
+      {/* Resend form */}
+      <div className="mt-5">
+        <p className="mb-2 text-[13px] text-outline">
+          {t('verify_email.no_code')}
+        </p>
+        <form action={resendAction}>
+          <input type="hidden" name="email" value={email} />
+          <button
+            type="submit"
+            disabled={isResending || resendCooldown > 0}
+            className="font-mono text-[12px] uppercase tracking-[0.04em] text-on-surface underline-offset-2 transition-colors duration-150 hover:not-disabled:text-white hover:not-disabled:underline disabled:cursor-not-allowed disabled:text-outline-variant"
+          >
+            {resendCooldown > 0
+              ? t('verify_email.resend_wait', { seconds: resendCooldown })
+              : t('verify_email.resend')}
+          </button>
+        </form>
+      </div>
+
+      {/* Back to sign up */}
+      <div className="mt-4">
+        <Link
+          href="/signup"
+          className="text-[13px] text-outline transition-colors duration-150 hover:text-on-surface"
+        >
+          {t('verify_email.back_to_signup')}
+        </Link>
+      </div>
+
+    </div>
+  )
+}
+
+/**
+ * VerifyEmailPage — prompts the user to enter the 6-digit verification code
+ * sent to their email during registration. Wraps the form in Suspense (required
+ * by useSearchParams in Next.js 15). Matches the Executive Precision dark design
+ * system used across the auth flow.
+ * @returns JSX.Element
+ * @example <VerifyEmailPage />
+ */
+export default function VerifyEmailPage() {
+  return (
     <main className="flex min-h-dvh bg-pitch-black font-sans">
 
       {/* ── Left panel ── */}
       <section className="flex flex-[0_0_480px] items-center justify-center bg-pitch-black px-6 py-12 max-[900px]:flex-1">
-        <div className="w-full max-w-[380px]">
-
-          {/* Logo */}
-          <div className="mb-8 flex items-center">
-            <Image
-              src="/images/logos/logo_white_No_Subtitle_Transparent_Wide.png"
-              alt="Instra"
-              width={120}
-              height={40}
-              priority
-              className="object-contain object-left"
-            />
-          </div>
-
-          {/* Heading */}
-          <h1 className="mb-2 text-[32px] font-semibold leading-[1.1] tracking-[-0.03em] text-white max-[480px]:text-[26px]">
-            {t('verify_email.title')}
-          </h1>
-          <p className="mb-1 text-[13px] text-outline">
-            {t('verify_email.subtitle')}
-          </p>
-          {email && (
-            <p className="mb-6 font-mono text-[12px] text-on-surface">
-              {email}
-            </p>
-          )}
-
-          {/* Code form */}
-          <form
-            action={verifyAction}
-            className="flex flex-col gap-5"
-            noValidate
-          >
-            <input type="hidden" name="email" value={email} />
-            <input type="hidden" name="code" value={code} />
-
-            {/* 6-digit boxes */}
-            <div className="flex flex-col gap-1.5">
-              <label className="font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-outline">
-                {t('verify_email.code_label')}
-              </label>
-              <div className="flex gap-2" role="group" aria-label={t('verify_email.code_label')}>
-                {digits.map((digit, i) => (
-                  <input
-                    key={i}
-                    ref={(el) => { digitRefs.current[i] = el }}
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={1}
-                    value={digit}
-                    onChange={(e) => handleDigitChange(i, e.target.value)}
-                    onKeyDown={(e) => handleDigitKeyDown(i, e)}
-                    onPaste={handlePaste}
-                    className={inputClass(hasCodeError)}
-                    aria-label={`${t('verify_email.code_label')} digit ${i + 1}`}
-                    autoComplete={i === 0 ? 'one-time-code' : 'off'}
-                  />
-                ))}
-              </div>
-              {verifyState.errors?.code && (
-                <p className="font-mono text-[11px] tracking-[0.03em] text-error">
-                  {verifyState.errors.code[0]}
-                </p>
-              )}
-              {verifyState.errors?._form && (
-                <p className="font-mono text-[11px] tracking-[0.03em] text-error">
-                  {verifyState.errors._form[0]}
-                </p>
-              )}
+        <Suspense fallback={
+          <div className="flex w-full max-w-[380px] flex-col gap-4">
+            <div className="h-10 w-32 animate-pulse rounded bg-white/5" />
+            <div className="h-8 w-48 animate-pulse rounded bg-white/5" />
+            <div className="h-4 w-full animate-pulse rounded bg-white/5" />
+            <div className="flex gap-2">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="h-12 w-10 animate-pulse rounded bg-white/5" />
+              ))}
             </div>
-
-            {/* Submit */}
-            <button
-              type="submit"
-              disabled={isVerifying || code.length < 6}
-              className="flex w-full items-center justify-center gap-2 rounded bg-white px-6 py-3 text-sm font-semibold tracking-[-0.01em] text-[#111] transition-[opacity,transform] duration-150 hover:not-disabled:opacity-90 active:not-disabled:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {isVerifying && (
-                <span className="size-3.5 animate-spin rounded-full border-2 border-[rgba(0,0,0,0.2)] border-t-[#111]" aria-hidden="true" />
-              )}
-              {t('verify_email.submit')}
-            </button>
-          </form>
-
-          {/* Resend form */}
-          <div className="mt-5">
-            <p className="mb-2 text-[13px] text-outline">
-              {t('verify_email.no_code')}
-            </p>
-            <form action={resendAction}>
-              <input type="hidden" name="email" value={email} />
-              <button
-                type="submit"
-                disabled={isResending || resendCooldown > 0}
-                className="font-mono text-[12px] uppercase tracking-[0.04em] text-on-surface underline-offset-2 transition-colors duration-150 hover:not-disabled:text-white hover:not-disabled:underline disabled:cursor-not-allowed disabled:text-outline-variant"
-              >
-                {resendCooldown > 0
-                  ? t('verify_email.resend_wait', { seconds: resendCooldown })
-                  : t('verify_email.resend')}
-              </button>
-            </form>
+            <div className="h-10 w-full animate-pulse rounded bg-white/5" />
           </div>
-
-          {/* Back to sign up */}
-          <div className="mt-4">
-            <Link
-              href="/signup"
-              className="text-[13px] text-outline transition-colors duration-150 hover:text-on-surface"
-            >
-              {t('verify_email.back_to_signup')}
-            </Link>
-          </div>
-
-        </div>
+        }>
+          <VerifyEmailForm />
+        </Suspense>
       </section>
 
       {/* ── Right panel ── */}
@@ -272,26 +297,27 @@ export default function VerifyEmailPage() {
           {/* Main copy */}
           <div className="relative z-10 mb-8 mt-auto">
             <h2 className="mb-3 mt-0 text-[36px] font-semibold leading-[1.1] tracking-[-0.03em] text-white">
-              {t('verify_email.panel_title')}
+              {/* Static text in right panel — not user-facing so not translated */}
+              One step away.
             </h2>
             <p className="mb-3 max-w-[400px] text-[15px] leading-relaxed text-outline">
-              {t('verify_email.panel_desc')}
+              Check your inbox for the verification code and enter it to activate your account.
             </p>
             <p className="m-0 font-mono text-[12px] tracking-[0.02em] text-outline-variant">
-              {t('verify_email.panel_social')}
+              Codes expire after 10 minutes · Max 5 attempts
             </p>
           </div>
 
           {/* Info card */}
           <div className="relative z-10 rounded-xl border border-white/[0.08] bg-white/[0.04] p-6">
             <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.06em] text-outline">
-              {t('verify_email.panel_card_label')}
+              Security
             </p>
             <p className="mb-0 text-[15px] font-semibold tracking-[-0.02em] text-on-surface">
-              {t('verify_email.panel_card_title')}
+              Your account is protected.
             </p>
             <p className="mb-0 mt-1 text-sm leading-relaxed text-outline">
-              {t('verify_email.panel_card_desc')}
+              Verification codes are cryptographically random and single-use. If you did not request this, you can safely ignore the email.
             </p>
           </div>
 

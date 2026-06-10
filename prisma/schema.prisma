@@ -85,5 +85,6 @@ model PendingRegistration {
   code         String
   expiresAt    DateTime
   lastSentAt   DateTime
+  attempts     Int      @default(0)
   createdAt    DateTime @default(now())
 }

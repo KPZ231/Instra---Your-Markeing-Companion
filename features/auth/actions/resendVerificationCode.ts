@@ -3,22 +3,14 @@
 import { prisma } from '@/lib/prisma'
 import { sendMail } from '@/lib/email/mailer'
 import { buildVerifyEmail, buildVerifyEmailText } from '@/lib/email/templates/verifyEmail'
+import { generateVerificationCode } from '@/lib/auth/generateVerificationCode'
 import type { AuthActionState } from '../types'
 
 /**
- * Generates a cryptographically random 6-digit verification code (100000–999999).
- * @returns 6-digit numeric code as a string
- */
-function generateVerificationCode(): string {
-  const array = new Uint32Array(1)
-  crypto.getRandomValues(array)
-  const code = 100000 + (array[0] % 900000)
-  return String(code)
-}
-
-/**
  * Server Action: resends the email verification code for a pending registration.
- * Enforces a 60-second cooldown between sends using the `lastSentAt` field.
+ * - Enforces a 60-second cooldown between sends using the `lastSentAt` field.
+ * - Returns a generic response whether or not a pending record exists (prevents email enumeration).
+ * - Sends the email BEFORE updating the DB to avoid stale codes on SMTP failure.
  * @param state - Previous action state (from useActionState)
  * @param formData - Form field: email
  * @returns AuthActionState with errors or success
@@ -37,8 +29,12 @@ export async function resendVerificationCode(
 
   const pending = await prisma.pendingRegistration.findUnique({ where: { email } })
 
+  // Return the same generic message regardless of whether a record exists to prevent email enumeration
   if (!pending) {
-    return { errors: { _form: ['No pending registration found for this email. Please sign up again.'] } }
+    return {
+      success: true,
+      message: 'If a pending registration exists for this address, a new code has been sent.',
+    }
   }
 
   const secondsSinceLastSent = (Date.now() - pending.lastSentAt.getTime()) / 1000
@@ -48,20 +44,25 @@ export async function resendVerificationCode(
     return { errors: { _form: [`Please wait ${secondsRemaining} seconds before requesting a new code.`] } }
   }
 
-  const code = generateVerificationCode()
-  const now = new Date()
-  const expiresAt = new Date(now.getTime() + 10 * 60 * 1000)
+  const newCode = generateVerificationCode()
+  const newExpiresAt = new Date(Date.now() + 10 * 60 * 1000)
+
+  // Send the email FIRST — only persist the new code if delivery succeeds.
+  // This prevents a scenario where the DB holds a new code that was never delivered.
+  try {
+    await sendMail({
+      to: email,
+      subject: 'Your new Instra verification code',
+      html: buildVerifyEmail({ code: newCode }),
+      text: buildVerifyEmailText(newCode),
+    })
+  } catch {
+    return { errors: { _form: ['Failed to send email. Please try again.'] } }
+  }
 
   await prisma.pendingRegistration.update({
     where: { email },
-    data: { code, expiresAt, lastSentAt: now },
-  })
-
-  await sendMail({
-    to: email,
-    subject: 'Your new Instra verification code',
-    html: buildVerifyEmail({ code }),
-    text: buildVerifyEmailText(code),
+    data: { code: newCode, expiresAt: newExpiresAt, lastSentAt: new Date() },
   })
 
   return { success: true }

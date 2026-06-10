@@ -4,10 +4,15 @@ import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
 import type { AuthActionState } from '../types'
 
+/** Maximum number of failed code attempts before the pending registration is invalidated. */
+const MAX_ATTEMPTS = 5
+
 /**
  * Server Action: verifies the 6-digit email code submitted during registration.
- * On success, creates the User record, deletes the PendingRegistration, and
- * redirects to the sign-in page with a verified flag so the user can log in.
+ * - Increments attempt counter before checking the code (brute-force protection).
+ * - Deletes the pending record after MAX_ATTEMPTS failed attempts.
+ * - Creates the User record and deletes PendingRegistration atomically on success.
+ * - Redirects to the sign-in page with a verified flag on success.
  * @param state - Previous action state (from useActionState)
  * @param formData - Form fields: email, code
  * @returns AuthActionState with errors if verification fails
@@ -35,22 +40,45 @@ export async function verifyEmail(
     return { errors: { _form: ['This code has expired. Please request a new one.'] } }
   }
 
-  if (pending.code !== code) {
-    return { errors: { code: ['Invalid verification code.'] } }
-  }
-
-  // Create the confirmed User record with emailVerified timestamp
-  await prisma.user.create({
-    data: {
-      email: pending.email,
-      name: pending.name ?? null,
-      passwordHash: pending.passwordHash,
-      emailVerified: new Date(),
-    },
+  // Increment attempt counter before validating the code to prevent timing-based enumeration
+  const updated = await prisma.pendingRegistration.update({
+    where: { email },
+    data: { attempts: { increment: 1 } },
   })
 
-  // Remove the pending record now that registration is complete
-  await prisma.pendingRegistration.delete({ where: { email } })
+  if (updated.attempts >= MAX_ATTEMPTS) {
+    // Too many failed attempts — delete the record to force a fresh registration
+    await prisma.pendingRegistration.delete({ where: { email } })
+    return {
+      errors: {
+        _form: ['Too many failed attempts. Please register again.'],
+      },
+    }
+  }
+
+  if (pending.code !== code) {
+    const attemptsRemaining = MAX_ATTEMPTS - updated.attempts
+    return {
+      errors: {
+        code: [
+          `Invalid verification code. ${attemptsRemaining} attempt${attemptsRemaining === 1 ? '' : 's'} remaining.`,
+        ],
+      },
+    }
+  }
+
+  // Code is correct — atomically create the User and delete the pending record
+  await prisma.$transaction([
+    prisma.user.create({
+      data: {
+        email: pending.email,
+        name: pending.name ?? null,
+        passwordHash: pending.passwordHash,
+        emailVerified: new Date(),
+      },
+    }),
+    prisma.pendingRegistration.delete({ where: { email } }),
+  ])
 
   // Redirect to sign-in; the user must enter their password to establish a session.
   // The verified=1 flag lets the sign-in page show a success notice.
