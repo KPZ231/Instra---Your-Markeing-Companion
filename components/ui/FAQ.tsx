@@ -12,9 +12,10 @@ export const FAQ = () => {
   const { t } = useTranslation();
 
   const categories = [
-    { id: "general", labelKey: "faq.categories.general" },
-    { id: "pricing", labelKey: "faq.categories.pricing" },
+    { id: "general",  labelKey: "faq.categories.general"  },
+    { id: "pricing",  labelKey: "faq.categories.pricing"  },
     { id: "security", labelKey: "faq.categories.security" },
+    { id: "usecase",  labelKey: "faq.categories.usecase"  },
   ];
 
   const [activeCategory, setActiveCategory] = useState(categories[0].id);
