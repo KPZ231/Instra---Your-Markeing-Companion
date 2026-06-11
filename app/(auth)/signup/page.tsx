@@ -1,12 +1,14 @@
 'use client'
 
-import { useActionState, useEffect, useRef, useState } from 'react'
+import { useActionState, useEffect, useRef, useState, useTransition } from 'react'
 import { signIn } from 'next-auth/react'
 import { useTranslation } from 'react-i18next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { z } from 'zod'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { registerUser } from '@/features/auth/actions/registerUser'
 import type { AuthActionState } from '@/features/auth/types'
 
@@ -14,19 +16,24 @@ const initialState: AuthActionState = { errors: {} }
 
 type RegisterMode = 'email' | 'username'
 
+// ── Shared password rules ──────────────────────────────────────────────────
+const passwordSchema = z
+  .string()
+  .min(8, 'Password must be at least 8 characters')
+  .max(128, 'Password must not exceed 128 characters')
+  .regex(/[a-zA-Z]/, 'Password must contain at least one letter')
+  .regex(/[0-9]/, 'Password must contain at least one number')
+  .regex(/[^a-zA-Z0-9]/, 'Password must contain at least one special character')
+
 const ClientEmailSchema = z
   .object({
     name: z.string().max(64, 'Name must not exceed 64 characters').optional(),
     email: z.string().min(1, 'Email is required').email('Enter a valid email address'),
-    password: z
-      .string()
-      .min(8, 'Password must be at least 8 characters')
-      .max(128, 'Password must not exceed 128 characters')
-      .regex(/[a-zA-Z]/, 'Password must contain at least one letter')
-      .regex(/[0-9]/, 'Password must contain at least one number')
-      .regex(/[^a-zA-Z0-9]/, 'Password must contain at least one special character'),
+    password: passwordSchema,
     confirmPassword: z.string().min(1, 'Please confirm your password'),
-    terms: z.boolean().refine((v) => v === true, { message: 'You must accept the Terms of Service' }),
+    terms: z
+      .boolean()
+      .refine((v) => v === true, { message: 'You must accept the Terms of Service' }),
   })
   .refine((d) => d.password === d.confirmPassword, {
     message: 'Passwords do not match',
@@ -45,103 +52,106 @@ const ClientUsernameSchema = z
       .refine((v) => v === '' || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v), {
         message: 'Enter a valid email address',
       })
-      .optional(),
-    password: z
-      .string()
-      .min(8, 'Password must be at least 8 characters')
-      .max(128, 'Password must not exceed 128 characters')
-      .regex(/[a-zA-Z]/, 'Password must contain at least one letter')
-      .regex(/[0-9]/, 'Password must contain at least one number')
-      .regex(/[^a-zA-Z0-9]/, 'Password must contain at least one special character'),
+      .optional()
+      .or(z.literal('')),
+    password: passwordSchema,
     confirmPassword: z.string().min(1, 'Please confirm your password'),
-    terms: z.boolean().refine((v) => v === true, { message: 'You must accept the Terms of Service' }),
+    terms: z
+      .boolean()
+      .refine((v) => v === true, { message: 'You must accept the Terms of Service' }),
   })
   .refine((d) => d.password === d.confirmPassword, {
     message: 'Passwords do not match',
     path: ['confirmPassword'],
   })
 
+// All fields from both modes combined — used to type the single useForm instance.
+type RegisterFormData = {
+  name?: string
+  email?: string
+  username?: string
+  password: string
+  confirmPassword: string
+  terms: boolean
+}
+
 /**
  * SignUpPage — two-panel registration screen following Executive Precision design system.
  * Supports two modes via tabs: email registration and username registration.
+ * Uses react-hook-form + zodResolver with hybrid validation (on-blur, silent before first submit).
  * @returns JSX.Element
  * @example <SignUpPage />
  */
 export default function SignUpPage() {
   const { t } = useTranslation('common')
   const [state, formAction, isPending] = useActionState(registerUser, initialState)
+  const [, startTransition] = useTransition()
+  const formRef = useRef<HTMLFormElement>(null)
   const [mode, setMode] = useState<RegisterMode>('email')
-  const [termsChecked, setTermsChecked] = useState(false)
-  const firstFieldRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => {
-    firstFieldRef.current?.focus()
-  }, [mode])
+  // modeRef keeps the active schema in sync with the resolver without recreating useForm.
+  const modeRef = useRef<RegisterMode>('email')
 
+  const { register, handleSubmit, formState: { errors }, watch, reset } = useForm<RegisterFormData>({
+    // Dynamic resolver: switches between email and username schemas based on modeRef.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: (values: any, context: any, options: any) => {
+      const schema = modeRef.current === 'email' ? ClientEmailSchema : ClientUsernameSchema
+      return zodResolver(schema)(values, context, options)
+    },
+    mode: 'onTouched',
+    reValidateMode: 'onChange',
+    defaultValues: { terms: false, password: '', confirmPassword: '' },
+  })
+
+  const termsChecked = watch('terms') === true
+
+  /** Show only _form-level server errors as toasts; field errors shown inline. */
   useEffect(() => {
     if (!state.errors) return
     if (state.errors._form?.length) {
       toast.error(state.errors._form[0], { description: 'Please try again.' })
     }
-    if (state.errors.email?.length) {
-      toast.warning(state.errors.email[0], { description: t('signup.email_label') })
-    }
-    if (state.errors.username?.length) {
-      toast.warning(state.errors.username[0], { description: t('signup.username_label') })
-    }
-    if (state.errors.password?.length) {
-      toast.warning(state.errors.password[0], { description: t('signup.password_label') })
-    }
-    if (state.errors.confirmPassword?.length) {
-      toast.warning(state.errors.confirmPassword[0], { description: t('signup.confirm_label') })
-    }
-    if (state.errors.terms?.length) {
-      toast.warning(state.errors.terms[0])
-    }
-  }, [state, t])
+  }, [state])
 
   /**
-   * Client-side Zod pre-validation before the server action fires.
+   * Switches registration mode, updates the resolver ref, and resets all fields.
+   * @param newMode - The mode to switch to
    */
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    const form = e.currentTarget
-    const getValue = (name: string) =>
-      (form.elements.namedItem(name) as HTMLInputElement | null)?.value ?? ''
-
-    const result =
-      mode === 'email'
-        ? ClientEmailSchema.safeParse({
-            name: getValue('name') || undefined,
-            email: getValue('email'),
-            password: getValue('password'),
-            confirmPassword: getValue('confirmPassword'),
-            terms: termsChecked ? (true as const) : undefined,
-          })
-        : ClientUsernameSchema.safeParse({
-            username: getValue('username'),
-            email: getValue('email') || undefined,
-            password: getValue('password'),
-            confirmPassword: getValue('confirmPassword'),
-            terms: termsChecked ? (true as const) : undefined,
-          })
-
-    if (!result.success) {
-      e.preventDefault()
-      const firstError = result.error.issues[0]
-      toast.error(firstError.message, {
-        description: firstError.path[0] ? `Field: ${String(firstError.path[0])}` : undefined,
-      })
-    }
+  function switchMode(newMode: RegisterMode) {
+    modeRef.current = newMode
+    setMode(newMode)
+    reset({ terms: false, password: '', confirmPassword: '' })
   }
 
-  const inputClass = (hasError?: string[]) =>
+  /**
+   * RHF handleSubmit callback: called only when client validation passes.
+   * Submits the native form to the server action via startTransition.
+   */
+  function onClientSubmit() {
+    startTransition(() => {
+      if (formRef.current) {
+        formAction(new FormData(formRef.current))
+      }
+    })
+  }
+
+  const inputClass = (hasError?: boolean) =>
     [
       'w-full rounded bg-[#040503] py-2.5 pl-[38px] pr-3.5',
       'text-sm text-on-surface placeholder:text-outline-variant',
       'border outline-none transition-[border-color,box-shadow] duration-150',
       'focus:border-white/80 focus:shadow-[0_0_0_2px_rgba(255,255,255,0.06)]',
-      hasError?.length ? 'border-error/50' : 'border-white/15',
+      hasError ? 'border-error/50' : 'border-white/15',
     ].join(' ')
+
+  // Client errors take precedence over server errors for each field.
+  const nameError = errors.name?.message ?? state.errors?.name?.[0]
+  const emailError = errors.email?.message ?? state.errors?.email?.[0]
+  const usernameError = errors.username?.message ?? state.errors?.username?.[0]
+  const passwordError = errors.password?.message ?? state.errors?.password?.[0]
+  const confirmPasswordError = errors.confirmPassword?.message ?? state.errors?.confirmPassword?.[0]
+  const termsError = errors.terms?.message ?? state.errors?.terms?.[0]
 
   return (
     <main className="flex min-h-dvh bg-pitch-black font-sans">
@@ -174,7 +184,7 @@ export default function SignUpPage() {
               <button
                 key={tab}
                 type="button"
-                onClick={() => setMode(tab)}
+                onClick={() => switchMode(tab)}
                 className={[
                   'flex flex-1 items-center justify-center gap-1.5 rounded py-2 font-mono text-[11px] uppercase tracking-[0.06em] transition-all duration-150',
                   mode === tab
@@ -199,7 +209,13 @@ export default function SignUpPage() {
           </div>
 
           {/* Form */}
-          <form action={formAction} onSubmit={handleSubmit} className="flex flex-col gap-3.5" noValidate>
+          <form
+            ref={formRef}
+            action={formAction}
+            onSubmit={handleSubmit(onClientSubmit)}
+            className="flex flex-col gap-3.5"
+            noValidate
+          >
             <input type="hidden" name="mode" value={mode} />
 
             {/* ── Email mode fields ── */}
@@ -217,18 +233,18 @@ export default function SignUpPage() {
                       <path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
                     </svg>
                     <input
-                      ref={firstFieldRef}
                       id="name"
-                      name="name"
                       type="text"
                       autoComplete="name"
+                      autoFocus
                       placeholder={t('signup.name_placeholder')}
-                      className={inputClass(state.errors?.name)}
-                      aria-describedby={state.errors?.name ? 'name-error' : undefined}
+                      className={inputClass(!!nameError)}
+                      aria-describedby={nameError ? 'name-error' : undefined}
+                      {...register('name')}
                     />
                   </div>
-                  {state.errors?.name && (
-                    <p id="name-error" className="font-mono text-[11px] tracking-[0.03em] text-error">{state.errors.name[0]}</p>
+                  {nameError && (
+                    <p id="name-error" className="font-mono text-[11px] tracking-[0.03em] text-error">{nameError}</p>
                   )}
                 </div>
 
@@ -244,16 +260,16 @@ export default function SignUpPage() {
                     </svg>
                     <input
                       id="email"
-                      name="email"
                       type="email"
                       autoComplete="email"
                       placeholder={t('signup.email_placeholder')}
-                      className={inputClass(state.errors?.email)}
-                      aria-describedby={state.errors?.email ? 'email-error' : undefined}
+                      className={inputClass(!!emailError)}
+                      aria-describedby={emailError ? 'email-error' : undefined}
+                      {...register('email')}
                     />
                   </div>
-                  {state.errors?.email && (
-                    <p id="email-error" className="font-mono text-[11px] tracking-[0.03em] text-error">{state.errors.email[0]}</p>
+                  {emailError && (
+                    <p id="email-error" className="font-mono text-[11px] tracking-[0.03em] text-error">{emailError}</p>
                   )}
                 </div>
               </>
@@ -270,24 +286,24 @@ export default function SignUpPage() {
                   <div className="relative">
                     <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-mono text-[13px] text-outline-variant" aria-hidden="true">@</span>
                     <input
-                      ref={firstFieldRef}
                       id="username"
-                      name="username"
                       type="text"
                       autoComplete="username"
+                      autoFocus
                       placeholder={t('signup.username_placeholder')}
-                      className={inputClass(state.errors?.username)}
-                      aria-describedby={state.errors?.username ? 'username-error' : undefined}
+                      className={inputClass(!!usernameError)}
+                      aria-describedby={usernameError ? 'username-error' : undefined}
+                      {...register('username')}
                     />
                   </div>
-                  {state.errors?.username && (
-                    <p id="username-error" className="font-mono text-[11px] tracking-[0.03em] text-error">{state.errors.username[0]}</p>
+                  {usernameError && (
+                    <p id="username-error" className="font-mono text-[11px] tracking-[0.03em] text-error">{usernameError}</p>
                   )}
                 </div>
 
                 {/* Email (optional) */}
                 <div className="flex flex-col gap-1.5">
-                  <label htmlFor="email" className="font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-outline">
+                  <label htmlFor="email-username" className="font-mono text-[11px] font-medium uppercase tracking-[0.06em] text-outline">
                     {t('signup.email_label')}
                     <span className="ml-1 normal-case tracking-normal text-outline-variant">{t('signup.optional')}</span>
                   </label>
@@ -297,17 +313,17 @@ export default function SignUpPage() {
                       <path d="M1 5.5L8 9.5L15 5.5" stroke="currentColor" strokeWidth="1.2" />
                     </svg>
                     <input
-                      id="email"
-                      name="email"
+                      id="email-username"
                       type="email"
                       autoComplete="email"
                       placeholder={t('signup.email_placeholder')}
-                      className={inputClass(state.errors?.email)}
-                      aria-describedby={state.errors?.email ? 'email-error' : undefined}
+                      className={inputClass(!!emailError)}
+                      aria-describedby={emailError ? 'email-error' : undefined}
+                      {...register('email')}
                     />
                   </div>
-                  {state.errors?.email && (
-                    <p id="email-error" className="font-mono text-[11px] tracking-[0.03em] text-error">{state.errors.email[0]}</p>
+                  {emailError && (
+                    <p id="email-error" className="font-mono text-[11px] tracking-[0.03em] text-error">{emailError}</p>
                   )}
                 </div>
               </>
@@ -325,20 +341,21 @@ export default function SignUpPage() {
                 </svg>
                 <input
                   id="password"
-                  name="password"
                   type="password"
                   autoComplete="new-password"
                   placeholder={t('signup.password_placeholder')}
-                  className={inputClass(state.errors?.password)}
-                  aria-describedby={state.errors?.password ? 'password-error' : undefined}
+                  className={inputClass(!!passwordError)}
+                  aria-describedby={passwordError ? 'password-error' : 'password-hint'}
+                  {...register('password')}
                 />
               </div>
-              {state.errors?.password && (
-                <p id="password-error" className="font-mono text-[11px] tracking-[0.03em] text-error">{state.errors.password[0]}</p>
+              {passwordError ? (
+                <p id="password-error" className="font-mono text-[11px] tracking-[0.03em] text-error">{passwordError}</p>
+              ) : (
+                <p id="password-hint" className="font-mono text-[10px] leading-relaxed text-outline-variant">
+                  {t('signup.password_hint')}
+                </p>
               )}
-              <p className="font-mono text-[10px] leading-relaxed text-outline-variant">
-                {t('signup.password_hint')}
-              </p>
             </div>
 
             {/* Confirm password */}
@@ -354,16 +371,16 @@ export default function SignUpPage() {
                 </svg>
                 <input
                   id="confirmPassword"
-                  name="confirmPassword"
                   type="password"
                   autoComplete="new-password"
                   placeholder={t('signup.confirm_placeholder')}
-                  className={inputClass(state.errors?.confirmPassword)}
-                  aria-describedby={state.errors?.confirmPassword ? 'confirm-error' : undefined}
+                  className={inputClass(!!confirmPasswordError)}
+                  aria-describedby={confirmPasswordError ? 'confirm-error' : undefined}
+                  {...register('confirmPassword')}
                 />
               </div>
-              {state.errors?.confirmPassword && (
-                <p id="confirm-error" className="font-mono text-[11px] tracking-[0.03em] text-error">{state.errors.confirmPassword[0]}</p>
+              {confirmPasswordError && (
+                <p id="confirm-error" className="font-mono text-[11px] tracking-[0.03em] text-error">{confirmPasswordError}</p>
               )}
             </div>
 
@@ -372,17 +389,15 @@ export default function SignUpPage() {
               className={[
                 'flex cursor-pointer items-start gap-2.5 rounded border p-3 transition-colors duration-150',
                 termsChecked ? 'border-white/20 bg-white/[0.03]' : 'border-white/10 bg-transparent',
-                state.errors?.terms?.length ? 'border-error/40' : '',
+                termsError ? 'border-error/40' : '',
               ].join(' ')}
             >
               <input
                 type="checkbox"
-                name="terms"
                 value="on"
-                checked={termsChecked}
-                onChange={(e) => setTermsChecked(e.target.checked)}
                 className="mt-0.5 size-3.5 shrink-0 cursor-pointer accent-white"
-                aria-describedby={state.errors?.terms ? 'terms-error' : undefined}
+                aria-describedby={termsError ? 'terms-error' : undefined}
+                {...register('terms')}
               />
               <span className="text-[12px] leading-relaxed text-outline">
                 {t('signup.terms_prefix')}{' '}
@@ -395,8 +410,8 @@ export default function SignUpPage() {
                 </Link>
               </span>
             </label>
-            {state.errors?.terms && (
-              <p id="terms-error" className="font-mono text-[11px] tracking-[0.03em] text-error">{state.errors.terms[0]}</p>
+            {termsError && (
+              <p id="terms-error" className="font-mono text-[11px] tracking-[0.03em] text-error">{termsError}</p>
             )}
 
             {/* Submit */}
