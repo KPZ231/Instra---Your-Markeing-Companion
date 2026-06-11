@@ -176,7 +176,7 @@ export default function WorkflowSection() {
                     delay: index * 0.12 + 0.1,
                     ease: [0.22, 1, 0.36, 1],
                   }}
-                  className="flex gap-5 pb-10 last:pb-0"
+                  className="relative flex gap-5 pb-10 last:pb-0"
                 >
                   {/* Node icon — positioned over the track line */}
                   <div
