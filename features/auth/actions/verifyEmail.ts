@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { prisma } from '@/lib/prisma'
+import { rateLimit, RateLimitError } from '@/lib/rate-limit'
 import type { AuthActionState } from '../types'
 
 /** Maximum number of failed code attempts before the pending registration is invalidated. */
@@ -23,6 +24,15 @@ export async function verifyEmail(
   state: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
+  try {
+    await rateLimit('verifyEmail')
+  } catch (error) {
+    if (error instanceof RateLimitError) {
+      return { errors: { _form: [error.message] } }
+    }
+    throw error
+  }
+
   const email = (formData.get('email') as string | null)?.trim() ?? ''
   const code = (formData.get('code') as string | null)?.trim() ?? ''
 

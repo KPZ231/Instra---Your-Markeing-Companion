@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma'
 import { createPasswordResetToken } from '@/lib/auth/resetToken'
 import { sendMail } from '@/lib/email/mailer'
 import { buildResetPasswordEmail, buildResetPasswordText } from '@/lib/email/templates/resetPassword'
+import { rateLimit, RateLimitError } from '@/lib/rate-limit'
 import type { AuthActionState } from '../types'
 
 const ForgotPasswordSchema = z.object({
@@ -32,6 +33,17 @@ export async function forgotPassword(
   }
 
   const { email } = parsed.data
+
+  try {
+    // Key combines IP + email so each account gets its own per-IP limit,
+    // preventing targeted account lockout via a single compromised IP.
+    await rateLimit('forgotPassword', (ip) => `${ip}:${email}`)
+  } catch (error) {
+    if (error instanceof RateLimitError) {
+      return { errors: { _form: [error.message] } }
+    }
+    throw error
+  }
 
   // Constant-time baseline: always wait at least 500 ms so timing doesn't
   // reveal whether an account exists (user enumeration via response time).

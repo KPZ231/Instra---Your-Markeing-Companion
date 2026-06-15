@@ -10,6 +10,7 @@ import { computeFingerprint, FINGERPRINT_COOKIE_NAME, FINGERPRINT_COOKIE_OPTIONS
 import { sendMail } from '@/lib/email/mailer'
 import { buildVerifyEmail, buildVerifyEmailText } from '@/lib/email/templates/verifyEmail'
 import { generateVerificationCode } from '@/lib/auth/generateVerificationCode'
+import { rateLimit, RateLimitError } from '@/lib/rate-limit'
 import type { AuthActionState } from '../types'
 
 /**
@@ -26,6 +27,15 @@ export async function registerUser(
   state: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
+  try {
+    await rateLimit('register')
+  } catch (error) {
+    if (error instanceof RateLimitError) {
+      return { errors: { _form: [error.message] } }
+    }
+    throw error
+  }
+
   const mode = formData.get('mode')
 
   const raw =

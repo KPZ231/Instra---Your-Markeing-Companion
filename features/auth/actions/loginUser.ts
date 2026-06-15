@@ -6,6 +6,7 @@ import { AuthError } from 'next-auth'
 import { LoginSchema } from '@/lib/auth/validation'
 import { signIn } from '@/lib/auth/config'
 import { computeFingerprint, FINGERPRINT_COOKIE_NAME, FINGERPRINT_COOKIE_OPTIONS } from '@/lib/auth/session'
+import { rateLimit, RateLimitError } from '@/lib/rate-limit'
 import type { AuthActionState } from '../types'
 
 /**
@@ -18,33 +19,42 @@ export async function loginUser(
   state: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
-  const raw = {
-    email: formData.get('email'),
-    password: formData.get('password'),
-  }
-
-  const parsed = LoginSchema.safeParse(raw)
-  if (!parsed.success) {
-    return { errors: parsed.error.flatten().fieldErrors }
-  }
-
   try {
-    await signIn('credentials', {
-      email: parsed.data.email,
-      password: parsed.data.password,
-      redirect: false,
-    })
-  } catch (error) {
-    if (error instanceof AuthError) {
-      return { errors: { _form: ['Invalid email or password.'] } }
+    await rateLimit('login')
+
+    const raw = {
+      email: formData.get('email'),
+      password: formData.get('password'),
     }
-    return { errors: { _form: ['An unexpected error occurred. Please try again.'] } }
+
+    const parsed = LoginSchema.safeParse(raw)
+    if (!parsed.success) {
+      return { errors: parsed.error.flatten().fieldErrors }
+    }
+
+    try {
+      await signIn('credentials', {
+        email: parsed.data.email,
+        password: parsed.data.password,
+        redirect: false,
+      })
+    } catch (error) {
+      if (error instanceof AuthError) {
+        return { errors: { _form: ['Invalid email or password.'] } }
+      }
+      return { errors: { _form: ['An unexpected error occurred. Please try again.'] } }
+    }
+
+    const ua = (await headers()).get('user-agent') ?? ''
+    const fp = await computeFingerprint(ua)
+    const cookieStore = await cookies()
+    cookieStore.set(FINGERPRINT_COOKIE_NAME, fp, FINGERPRINT_COOKIE_OPTIONS)
+
+    redirect('/dashboard')
+  } catch (error) {
+    if (error instanceof RateLimitError) {
+      return { errors: { _form: [error.message] } }
+    }
+    throw error
   }
-
-  const ua = (await headers()).get('user-agent') ?? ''
-  const fp = await computeFingerprint(ua)
-  const cookieStore = await cookies()
-  cookieStore.set(FINGERPRINT_COOKIE_NAME, fp, FINGERPRINT_COOKIE_OPTIONS)
-
-  redirect('/dashboard')
 }

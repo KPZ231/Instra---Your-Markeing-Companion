@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { sendMail } from '@/lib/email/mailer'
 import { buildVerifyEmail, buildVerifyEmailText } from '@/lib/email/templates/verifyEmail'
 import { generateVerificationCode } from '@/lib/auth/generateVerificationCode'
+import { rateLimit, RateLimitError } from '@/lib/rate-limit'
 import type { AuthActionState } from '../types'
 
 /**
@@ -21,6 +22,15 @@ export async function resendVerificationCode(
   state: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
+  try {
+    await rateLimit('resendCode')
+  } catch (error) {
+    if (error instanceof RateLimitError) {
+      return { errors: { _form: [error.message] } }
+    }
+    throw error
+  }
+
   const email = (formData.get('email') as string | null)?.trim() ?? ''
 
   if (!email) {
