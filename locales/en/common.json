@@ -710,5 +710,51 @@
         "label": "// PLUGIN ECOSYSTEM",
         "heading": "Extend Instra\nyour way.",
         "description": "Instra's plugin system is fully open. Any developer can extend the platform — add widgets, register routes, or hook into events via the PluginContext API."
+    },
+    "dashboard": {
+        "nav": {
+            "overview": "Overview",
+            "analytics": "Analytics",
+            "campaigns": "Campaigns",
+            "schedule": "Schedule",
+            "plugins": "Plugins",
+            "settings": "Settings"
+        },
+        "header": {
+            "search": "Search...",
+            "notifications": "Notifications"
+        },
+        "overview": {
+            "label": "// OVERVIEW",
+            "heading": "Good morning"
+        },
+        "stats": {
+            "posts": "Posts Published",
+            "reach": "Total Reach",
+            "engagement": "Avg. Engagement",
+            "followers": "Followers Growth",
+            "vsLastWeek": "vs last week"
+        },
+        "chart": {
+            "label": "// ANALYTICS",
+            "title": "Engagement Rate",
+            "aria": "Engagement rate chart"
+        },
+        "activity": {
+            "label": "// ACTIVITY",
+            "title": "Recent Activity"
+        },
+        "quickActions": {
+            "label": "// ACTIONS",
+            "title": "Quick Actions",
+            "newPost": "New Post",
+            "newCampaign": "New Campaign",
+            "viewReport": "View Report",
+            "addPlugin": "Add Plugin"
+        },
+        "pluginSlot": {
+            "label": "// Plugin Slot",
+            "hint": "dashboard:bottom — install a plugin to use this slot"
+        }
     }
 }

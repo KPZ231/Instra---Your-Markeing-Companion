@@ -710,5 +710,51 @@
         "label": "// EKOSYSTEM PLUGINÓW",
         "heading": "Rozszerzaj Instra\nna swój sposób.",
         "description": "System pluginów Instra jest w pełni otwarty. Każdy developer może rozszerzyć platformę — dodawać widżety, rejestrować trasy lub nasłuchiwać zdarzeń przez API PluginContext."
+    },
+    "dashboard": {
+        "nav": {
+            "overview": "Przegląd",
+            "analytics": "Analityka",
+            "campaigns": "Kampanie",
+            "schedule": "Harmonogram",
+            "plugins": "Pluginy",
+            "settings": "Ustawienia"
+        },
+        "header": {
+            "search": "Szukaj...",
+            "notifications": "Powiadomienia"
+        },
+        "overview": {
+            "label": "// PRZEGLĄD",
+            "heading": "Dzień dobry"
+        },
+        "stats": {
+            "posts": "Opublikowane posty",
+            "reach": "Łączny zasięg",
+            "engagement": "Śr. zaangażowanie",
+            "followers": "Wzrost obserwujących",
+            "vsLastWeek": "vs poprzedni tydzień"
+        },
+        "chart": {
+            "label": "// ANALITYKA",
+            "title": "Wskaźnik zaangażowania",
+            "aria": "Wykres wskaźnika zaangażowania"
+        },
+        "activity": {
+            "label": "// AKTYWNOŚĆ",
+            "title": "Ostatnia aktywność"
+        },
+        "quickActions": {
+            "label": "// AKCJE",
+            "title": "Szybkie akcje",
+            "newPost": "Nowy post",
+            "newCampaign": "Nowa kampania",
+            "viewReport": "Pokaż raport",
+            "addPlugin": "Dodaj plugin"
+        },
+        "pluginSlot": {
+            "label": "// Slot pluginu",
+            "hint": "dashboard:bottom — zainstaluj plugin, aby użyć tego slotu"
+        }
     }
 }
