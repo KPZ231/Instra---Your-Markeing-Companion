@@ -1,5 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import type { PluginManifest } from './manifest'
+import { parseManifest } from './manifest'
+import { logPluginAction } from './audit'
 
 /**
  * Registers a brand-new plugin together with its first version (DRAFT).
@@ -22,6 +24,17 @@ export async function createPlugin(input: {
   manifest: PluginManifest
   bundleStorageKey: string
 }) {
+  const existing = await prisma.plugin.findUnique({ where: { slug: input.slug } })
+  if (existing) {
+    throw new Error(`Plugin slug "${input.slug}" is already taken`)
+  }
+
+  const manifestResult = parseManifest(input.manifest)
+  if (!manifestResult.success) {
+    throw new Error(`Invalid manifest: ${manifestResult.error.message}`)
+  }
+  const validatedManifest = manifestResult.data
+
   const plugin = await prisma.plugin.create({
     data: {
       slug: input.slug,
@@ -33,12 +46,15 @@ export async function createPlugin(input: {
   const version = await prisma.pluginVersion.create({
     data: {
       pluginId: plugin.id,
-      version: input.manifest.version,
+      version: validatedManifest.version,
       status: 'DRAFT',
-      manifest: input.manifest,
+      manifest: validatedManifest,
       bundleStorageKey: input.bundleStorageKey,
     },
   })
+
+  await logPluginAction(plugin.id, input.authorId, 'plugin.created', { slug: input.slug, version: validatedManifest.version })
+
   return { plugin, version }
 }
 
@@ -48,7 +64,9 @@ export async function createPlugin(input: {
  * @returns Updated plugin version record
  */
 export async function submitVersionForReview(versionId: string) {
-  return prisma.pluginVersion.update({ where: { id: versionId }, data: { status: 'PENDING_REVIEW' } })
+  const pluginVersion = await prisma.pluginVersion.update({ where: { id: versionId }, data: { status: 'PENDING_REVIEW' } })
+  await logPluginAction(pluginVersion.pluginId, null, 'version.submitted', { versionId })
+  return pluginVersion
 }
 
 /**
@@ -56,12 +74,15 @@ export async function submitVersionForReview(versionId: string) {
  * @param versionId - ID of the plugin version to approve
  * @param reviewerId - User ID of the admin approving the version
  * @returns Updated plugin version record
+ * @remarks Caller must verify the reviewer has UserRole.ADMIN before calling this function.
  */
 export async function approveVersion(versionId: string, reviewerId: string) {
-  return prisma.pluginVersion.update({
+  const pluginVersion = await prisma.pluginVersion.update({
     where: { id: versionId },
     data: { status: 'APPROVED', reviewedById: reviewerId, reviewedAt: new Date(), rejectionReason: null },
   })
+  await logPluginAction(pluginVersion.pluginId, reviewerId, 'version.approved', { versionId })
+  return pluginVersion
 }
 
 /**
@@ -70,12 +91,15 @@ export async function approveVersion(versionId: string, reviewerId: string) {
  * @param reviewerId - User ID of the admin rejecting the version
  * @param reason - Human-readable explanation for the rejection
  * @returns Updated plugin version record
+ * @remarks Caller must verify the reviewer has UserRole.ADMIN before calling this function.
  */
 export async function rejectVersion(versionId: string, reviewerId: string, reason: string) {
-  return prisma.pluginVersion.update({
+  const pluginVersion = await prisma.pluginVersion.update({
     where: { id: versionId },
     data: { status: 'REJECTED', reviewedById: reviewerId, reviewedAt: new Date(), rejectionReason: reason },
   })
+  await logPluginAction(pluginVersion.pluginId, reviewerId, 'version.rejected', { versionId, reason })
+  return pluginVersion
 }
 
 /**
