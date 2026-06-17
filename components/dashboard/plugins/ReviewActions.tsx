@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 interface ReviewActionsProps {
   versionId: string;
@@ -16,6 +17,7 @@ interface ReviewActionsProps {
  */
 export default function ReviewActions({ versionId }: ReviewActionsProps) {
   const router = useRouter();
+  const { t } = useTranslation();
   const [mode, setMode] = useState<"idle" | "rejecting">("idle");
   const [reason, setReason] = useState("");
   const [loading, setLoading] = useState(false);
@@ -57,7 +59,7 @@ export default function ReviewActions({ versionId }: ReviewActionsProps) {
         <textarea
           value={reason}
           onChange={(e) => setReason(e.target.value)}
-          placeholder="Explain why..."
+          placeholder={t("plugins.admin.reject_reason_placeholder")}
           rows={3}
           className="w-full rounded-sm border px-3 py-2 font-mono text-xs bg-transparent outline-none resize-none transition-colors"
           style={{
@@ -77,7 +79,7 @@ export default function ReviewActions({ versionId }: ReviewActionsProps) {
             className="px-3 py-1.5 rounded-sm font-mono text-xs tracking-[0.08em] uppercase border transition-colors disabled:opacity-50"
             style={{ borderColor: "rgba(255,75,75,0.5)", color: "#ffb4ab" }}
           >
-            {loading ? "Rejecting..." : "Confirm Rejection"}
+            {loading ? t("plugins.admin.rejecting") : t("plugins.admin.confirm_reject")}
           </button>
           <button
             onClick={() => {
@@ -92,7 +94,7 @@ export default function ReviewActions({ versionId }: ReviewActionsProps) {
               color: "var(--color-on-surface-variant)",
             }}
           >
-            Cancel
+            {t("plugins.admin.cancel")}
           </button>
         </div>
       </div>
@@ -112,7 +114,7 @@ export default function ReviewActions({ versionId }: ReviewActionsProps) {
         className="px-3 py-1.5 rounded-sm font-mono text-xs tracking-[0.08em] uppercase border transition-colors disabled:opacity-50"
         style={{ borderColor: "rgba(255,75,75,0.4)", color: "#ffb4ab" }}
       >
-        Reject
+        {t("plugins.admin.reject")}
       </button>
       <button
         onClick={() => submitDecision("approve")}
@@ -123,7 +125,7 @@ export default function ReviewActions({ versionId }: ReviewActionsProps) {
           color: "var(--color-on-primary)",
         }}
       >
-        {loading ? "Approving..." : "Approve"}
+        {loading ? t("plugins.admin.approving") : t("plugins.admin.approve")}
       </button>
     </div>
   );

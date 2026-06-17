@@ -35,7 +35,7 @@ export default function AdminReviewCard({
   manifest,
   submittedAt,
 }: AdminReviewCardProps) {
-  const date = new Date(submittedAt).toLocaleDateString("pl-PL", {
+  const date = new Date(submittedAt).toLocaleDateString(undefined, {
     year: "numeric",
     month: "short",
     day: "numeric",
