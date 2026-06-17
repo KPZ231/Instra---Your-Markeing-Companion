@@ -1,0 +1,23 @@
+{
+  "name": "hello-dashboard",
+  "version": "1.0.0",
+  "description": "Prosty plugin demonstracyjny wyświetlający powitanie i statystyki na dashboardzie.",
+  "author": "Instra Team",
+  "permissions": [
+    "widgets:dashboard:top",
+    "storage:kv"
+  ],
+  "main": "index.js",
+  "locales": {
+    "en": {
+      "greeting": "Hello from Plugin!",
+      "visits_label": "Dashboard visits today",
+      "tip": "This widget is powered by the Instra plugin system."
+    },
+    "pl": {
+      "greeting": "Cześć z Pluginu!",
+      "visits_label": "Wejścia na dashboard dziś",
+      "tip": "Ten widget jest zasilany przez system pluginów Instra."
+    }
+  }
+}
