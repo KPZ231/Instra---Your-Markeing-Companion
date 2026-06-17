@@ -21,7 +21,7 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
     <PluginErrorBoundary>
       <>
         {blocks.map((block, index) => (
-          <Block key={index} block={block} />
+          <Block key={`${block.type}-${index}`} block={block} />
         ))}
       </>
     </PluginErrorBoundary>
@@ -36,29 +36,29 @@ export function BlockRenderer({ blocks }: BlockRendererProps) {
 function Block({ block }: { block: UIBlock }) {
   switch (block.type) {
     case 'text':
-      return <p className="text-sm text-bone">{block.value}</p>
+      return <p className="text-sm text-accent-bone">{block.value}</p>
     case 'card':
       return (
-        <div className="rounded-lg border border-bone/10 p-4">
-          <h3 className="mb-2 font-semibold text-bone">{block.title}</h3>
+        <div className="rounded-lg border border-accent-bone/10 p-4">
+          <h3 className="mb-2 font-semibold text-accent-bone">{block.title}</h3>
           <BlockRenderer blocks={block.children} />
         </div>
       )
     case 'list':
       return (
-        <ul className="list-disc pl-5 text-sm text-bone">
+        <ul className="list-disc pl-5 text-sm text-accent-bone">
           {block.items.map((item, i) => (
-            <li key={i}>{item}</li>
+            <li key={`item-${i}`}>{item}</li>
           ))}
         </ul>
       )
     case 'table':
       return (
-        <table className="w-full text-sm text-bone">
+        <table className="w-full text-sm text-accent-bone">
           <thead>
             <tr>
               {block.columns.map((col, i) => (
-                <th key={i} className="text-left">
+                <th key={`col-${i}`} className="text-left">
                   {col}
                 </th>
               ))}
@@ -66,9 +66,9 @@ function Block({ block }: { block: UIBlock }) {
           </thead>
           <tbody>
             {block.rows.map((row, i) => (
-              <tr key={i}>
+              <tr key={`row-${i}`}>
                 {row.map((cell, j) => (
-                  <td key={j}>{cell}</td>
+                  <td key={`cell-${i}-${j}`}>{cell}</td>
                 ))}
               </tr>
             ))}
@@ -79,7 +79,7 @@ function Block({ block }: { block: UIBlock }) {
       return (
         <button
           type="button"
-          className="rounded bg-success px-3 py-1 text-sm text-black"
+          className="rounded bg-success-green px-3 py-1 text-sm text-black"
           data-action={block.action}
         >
           {block.label}
