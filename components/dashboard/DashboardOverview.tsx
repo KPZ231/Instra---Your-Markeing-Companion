@@ -6,6 +6,7 @@ import StatCard from "@/components/dashboard/StatCard";
 import AnalyticsChart from "@/components/dashboard/AnalyticsChart";
 import ActivityFeed from "@/components/dashboard/ActivityFeed";
 import QuickActions from "@/components/dashboard/QuickActions";
+import DashboardWidgetSlot from "@/components/dashboard/DashboardWidgetSlot";
 
 const STATS = [
   { id: "posts", labelKey: "dashboard.stats.posts", value: "142", delta: 8.3, deltaLabelKey: "dashboard.stats.vsLastWeek" },
@@ -97,29 +98,8 @@ export default function DashboardOverview() {
           <QuickActions />
         </motion.div>
 
-        {/* Plugin slot placeholder */}
-        <motion.div
-          variants={fadeUp}
-          className="rounded-sm border flex items-center justify-center py-10"
-          style={{
-            borderColor: "rgba(255,255,255,0.06)",
-            borderStyle: "dashed",
-          }}
-        >
-          <div className="text-center">
-            <p
-              className="font-mono text-xs tracking-[0.1em] uppercase mb-2"
-              style={{ color: "var(--color-on-surface-variant)" }}
-            >
-              {t("dashboard.pluginSlot.label")}
-            </p>
-            <p
-              className="font-mono text-xs"
-              style={{ color: "var(--color-outline)" }}
-            >
-              {t("dashboard.pluginSlot.hint")}
-            </p>
-          </div>
+        <motion.div variants={fadeUp}>
+          <DashboardWidgetSlot />
         </motion.div>
       </motion.div>
     </div>
