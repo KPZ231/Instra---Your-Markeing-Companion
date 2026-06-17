@@ -31,6 +31,8 @@ model User {
   pluginData          PluginData[]
   reviewedVersions    PluginVersion[]      @relation
 
+  posts Post[]
+  likes Like[]
 }
 
 model Account {
@@ -191,4 +193,44 @@ model PluginAuditLog {
   plugin Plugin @relation(fields: [pluginId], references: [id], onDelete: Cascade)
 
   @@index([pluginId, createdAt])
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  content   String?  @db.Text
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  media     Media[]
+  likes     Like[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([authorId])
+  @@index([createdAt])
+}
+
+model Media {
+  id          String   @id @default(cuid())
+  postId      String
+  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  url         String
+  storagePath String
+  mimeType    String
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  @@index([postId])
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([postId, userId])
+  @@index([postId])
+  @@index([userId])
 }
