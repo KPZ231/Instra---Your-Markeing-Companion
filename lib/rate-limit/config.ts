@@ -17,6 +17,8 @@ export const RATE_LIMIT_PRESETS = {
   forgotPassword: { limit: 3,  window: '15 m' },
   verifyEmail:    { limit: 10, window: '5 m'  },
   resendCode:     { limit: 2,  window: '1 m'  },
+  createPost:     { limit: 10, window: '1 h'  },
+  toggleLike:     { limit: 60, window: '1 m'  },
 } satisfies Record<string, RateLimitPreset>
 
 export type RateLimitPresetKey = keyof typeof RATE_LIMIT_PRESETS
