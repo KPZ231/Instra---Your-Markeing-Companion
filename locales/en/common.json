@@ -753,8 +753,64 @@
             "addPlugin": "Add Plugin"
         },
         "pluginSlot": {
-            "label": "// Plugin Slot",
-            "hint": "dashboard:bottom — install a plugin to use this slot"
+            "label": "// PLUGIN SLOT",
+            "empty": "No active plugins — browse the marketplace",
+            "hint": "DASHBOARD_TOP — install a plugin to use this slot"
+        },
+        "adminNav": "Admin"
+    },
+    "plugins": {
+        "marketplace": {
+            "label": "// MARKETPLACE",
+            "heading": "Plugin Marketplace",
+            "empty": "No plugins available yet.",
+            "installed": "INSTALLED",
+            "update": "UPDATE",
+            "install": "Install",
+            "uninstall": "Uninstall",
+            "update_action": "Update",
+            "author": "by",
+            "capabilities": "capabilities",
+            "installing": "Installing...",
+            "uninstalling": "Uninstalling..."
+        },
+        "upload": {
+            "label": "// UPLOAD PLUGIN",
+            "heading": "Submit a Plugin",
+            "slug_label": "Slug",
+            "slug_placeholder": "my-plugin",
+            "name_label": "Name",
+            "name_placeholder": "My Plugin",
+            "description_label": "Description",
+            "description_placeholder": "What does this plugin do?",
+            "version_label": "Version",
+            "version_placeholder": "1.0.0",
+            "manifest_label": "Manifest JSON",
+            "manifest_placeholder": "{\"name\": \"my-plugin\", \"version\": \"1.0.0\", \"description\": \"\", \"author\": \"\", \"permissions\": []}",
+            "bundle_label": "Bundle (.js)",
+            "submit": "Submit for Review",
+            "submitting": "Submitting...",
+            "success": "Plugin submitted for review.",
+            "error": "Failed to submit plugin."
+        },
+        "admin": {
+            "label": "// ADMIN",
+            "heading": "Plugin Review Queue",
+            "empty": "No plugins pending review.",
+            "approve": "Approve",
+            "reject": "Reject",
+            "reject_reason_label": "Rejection reason",
+            "reject_reason_placeholder": "Explain why this plugin is being rejected...",
+            "confirm_reject": "Confirm Rejection",
+            "cancel": "Cancel",
+            "approving": "Approving...",
+            "rejecting": "Rejecting...",
+            "pending_badge": "PENDING REVIEW",
+            "submitted": "submitted",
+            "version_label": "version",
+            "author_label": "author",
+            "capabilities_label": "capabilities",
+            "manifest_label": "Manifest"
         }
     }
 }

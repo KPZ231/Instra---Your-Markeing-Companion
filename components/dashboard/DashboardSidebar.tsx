@@ -10,12 +10,14 @@ import {
   Puzzle,
   Settings,
   Zap,
+  ShieldCheck,
 } from "lucide-react";
 
 interface NavItem {
   href: string;
   labelKey: string;
   icon: React.ReactNode;
+  adminOnly?: boolean;
 }
 
 const NAV_ITEMS: NavItem[] = [
@@ -25,18 +27,29 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/dashboard/schedule", labelKey: "dashboard.nav.schedule", icon: <CalendarDays size={18} /> },
   { href: "/dashboard/plugins", labelKey: "dashboard.nav.plugins", icon: <Puzzle size={18} /> },
   { href: "/dashboard/settings", labelKey: "dashboard.nav.settings", icon: <Settings size={18} /> },
+  { href: "/dashboard/admin/plugins", labelKey: "dashboard.adminNav", icon: <ShieldCheck size={18} />, adminOnly: true },
 ];
+
+interface DashboardSidebarProps {
+  role?: string;
+}
 
 /**
  * Fixed left sidebar for the dashboard shell.
  * Highlights the active route via usePathname.
+ * Shows admin link when role === 'ADMIN'.
  *
+ * @param role - Current user's role, used to show admin navigation
  * @example
- * <DashboardSidebar />
+ * <DashboardSidebar role="ADMIN" />
  */
-export default function DashboardSidebar() {
+export default function DashboardSidebar({ role }: DashboardSidebarProps) {
   const { t } = useTranslation();
   const pathname = usePathname();
+
+  const visibleItems = NAV_ITEMS.filter(
+    (item) => !item.adminOnly || role === "ADMIN"
+  );
 
   return (
     <aside
@@ -61,8 +74,8 @@ export default function DashboardSidebar() {
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-0.5">
-        {NAV_ITEMS.map((item) => {
-          const isActive = pathname === item.href;
+        {visibleItems.map((item) => {
+          const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
           return (
             <Link
               key={item.href}

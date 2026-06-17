@@ -753,8 +753,64 @@
             "addPlugin": "Dodaj plugin"
         },
         "pluginSlot": {
-            "label": "// Slot pluginu",
-            "hint": "dashboard:bottom — zainstaluj plugin, aby użyć tego slotu"
+            "label": "// SLOT PLUGINÓW",
+            "empty": "Brak aktywnych pluginów — przeglądaj marketplace",
+            "hint": "DASHBOARD_TOP — zainstaluj plugin aby użyć tego slotu"
+        },
+        "adminNav": "Admin"
+    },
+    "plugins": {
+        "marketplace": {
+            "label": "// MARKETPLACE",
+            "heading": "Marketplace Pluginów",
+            "empty": "Brak dostępnych pluginów.",
+            "installed": "ZAINSTALOWANY",
+            "update": "AKTUALIZACJA",
+            "install": "Zainstaluj",
+            "uninstall": "Odinstaluj",
+            "update_action": "Aktualizuj",
+            "author": "autor",
+            "capabilities": "uprawnienia",
+            "installing": "Instalowanie...",
+            "uninstalling": "Odinstalowywanie..."
+        },
+        "upload": {
+            "label": "// PRZEŚLIJ PLUGIN",
+            "heading": "Prześlij Plugin",
+            "slug_label": "Slug",
+            "slug_placeholder": "moj-plugin",
+            "name_label": "Nazwa",
+            "name_placeholder": "Mój Plugin",
+            "description_label": "Opis",
+            "description_placeholder": "Co robi ten plugin?",
+            "version_label": "Wersja",
+            "version_placeholder": "1.0.0",
+            "manifest_label": "Manifest JSON",
+            "manifest_placeholder": "{\"name\": \"moj-plugin\", \"version\": \"1.0.0\", \"description\": \"\", \"author\": \"\", \"permissions\": []}",
+            "bundle_label": "Bundle (.js)",
+            "submit": "Prześlij do recenzji",
+            "submitting": "Przesyłanie...",
+            "success": "Plugin przesłany do recenzji.",
+            "error": "Błąd przesyłania pluginu."
+        },
+        "admin": {
+            "label": "// ADMIN",
+            "heading": "Kolejka Recenzji Pluginów",
+            "empty": "Brak pluginów oczekujących na recenzję.",
+            "approve": "Zatwierdź",
+            "reject": "Odrzuć",
+            "reject_reason_label": "Powód odrzucenia",
+            "reject_reason_placeholder": "Wyjaśnij dlaczego ten plugin jest odrzucany...",
+            "confirm_reject": "Potwierdź odrzucenie",
+            "cancel": "Anuluj",
+            "approving": "Zatwierdzanie...",
+            "rejecting": "Odrzucanie...",
+            "pending_badge": "OCZEKUJE NA RECENZJĘ",
+            "submitted": "przesłano",
+            "version_label": "wersja",
+            "author_label": "autor",
+            "capabilities_label": "uprawnienia",
+            "manifest_label": "Manifest"
         }
     }
 }
