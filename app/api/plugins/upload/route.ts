@@ -46,7 +46,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
-  if (!bundleFile.name.endsWith(".js")) {
+  const ALLOWED_MIME = [
+    "application/javascript",
+    "text/javascript",
+    "text/plain",
+    "application/octet-stream",
+  ];
+  if (!bundleFile.name.endsWith(".js") || !ALLOWED_MIME.includes(bundleFile.type)) {
     return NextResponse.json({ error: "Bundle must be a .js file" }, { status: 400 });
   }
 
@@ -60,7 +66,7 @@ export async function POST(req: NextRequest) {
   const manifestResult = parseManifest(manifestJson);
   if (!manifestResult.success) {
     return NextResponse.json(
-      { error: `Invalid manifest: ${manifestResult.error.message}` },
+      { error: "Invalid manifest structure" },
       { status: 400 }
     );
   }

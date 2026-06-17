@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 
 const inputStyle = {
   background: "var(--color-surface-container-lowest)",
@@ -20,10 +21,10 @@ const focusStyle = {
  */
 export default function UploadForm() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  const formRef = useRef<HTMLFormElement>(null);
 
   /**
    * Handles form submission — sends multipart data to the upload API.
@@ -49,7 +50,7 @@ export default function UploadForm() {
       router.push("/dashboard/plugins");
       router.refresh();
     } catch {
-      setError("Network error. Please try again.");
+      setError(t("plugins.upload.error"));
     } finally {
       setLoading(false);
     }
@@ -67,7 +68,7 @@ export default function UploadForm() {
     "w-full rounded-sm border px-3 py-2.5 text-sm font-sans bg-transparent outline-none transition-colors";
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} className="space-y-5 max-w-xl">
+    <form onSubmit={handleSubmit} className="space-y-5 max-w-xl">
       {/* Slug */}
       <div>
         <label
@@ -75,13 +76,13 @@ export default function UploadForm() {
           className={labelClass}
           style={{ color: "var(--color-on-surface-variant)" }}
         >
-          Slug
+          {t("plugins.upload.slug_label")}
         </label>
         <input
           id="slug"
           name="slug"
           type="text"
-          placeholder="my-plugin"
+          placeholder={t("plugins.upload.slug_placeholder")}
           required
           pattern="^[a-z0-9-]+$"
           className={inputClass}
@@ -101,13 +102,13 @@ export default function UploadForm() {
           className={labelClass}
           style={{ color: "var(--color-on-surface-variant)" }}
         >
-          Nazwa
+          {t("plugins.upload.name_label")}
         </label>
         <input
           id="name"
           name="name"
           type="text"
-          placeholder="My Plugin"
+          placeholder={t("plugins.upload.name_placeholder")}
           required
           className={inputClass}
           style={getFieldStyle("name")}
@@ -123,13 +124,13 @@ export default function UploadForm() {
           className={labelClass}
           style={{ color: "var(--color-on-surface-variant)" }}
         >
-          Opis
+          {t("plugins.upload.description_label")}
         </label>
         <input
           id="description"
           name="description"
           type="text"
-          placeholder="Co robi ten plugin?"
+          placeholder={t("plugins.upload.description_placeholder")}
           required
           className={inputClass}
           style={getFieldStyle("description")}
@@ -145,13 +146,13 @@ export default function UploadForm() {
           className={labelClass}
           style={{ color: "var(--color-on-surface-variant)" }}
         >
-          Manifest JSON
+          {t("plugins.upload.manifest_label")}
         </label>
         <textarea
           id="manifest"
           name="manifest"
           rows={6}
-          placeholder={`{\n  "name": "my-plugin",\n  "version": "1.0.0",\n  "description": "",\n  "author": "",\n  "permissions": [],\n  "main": "bundle.js"\n}`}
+          placeholder={t("plugins.upload.manifest_placeholder")}
           required
           className={inputClass + " resize-none font-mono text-xs"}
           style={getFieldStyle("manifest")}
@@ -167,7 +168,7 @@ export default function UploadForm() {
           className={labelClass}
           style={{ color: "var(--color-on-surface-variant)" }}
         >
-          Bundle (.js)
+          {t("plugins.upload.bundle_label")}
         </label>
         <input
           id="bundle"
@@ -207,7 +208,7 @@ export default function UploadForm() {
           color: "var(--color-on-primary)",
         }}
       >
-        {loading ? "Przesyłanie..." : "Prześlij do recenzji"}
+        {loading ? t("plugins.upload.submitting") : t("plugins.upload.submit")}
       </button>
     </form>
   );
