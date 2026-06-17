@@ -119,3 +119,20 @@ export async function listApprovedPlugins() {
     include: { plugin: true },
   })
 }
+
+/**
+ * Returns all plugin versions submitted by the given user, ordered newest first.
+ * Used to show submission status (PENDING_REVIEW / APPROVED / REJECTED) on the marketplace page.
+ * @param userId - The author's user ID
+ */
+export async function getUserSubmissions(userId: string) {
+  return prisma.pluginVersion.findMany({
+    where: { plugin: { authorId: userId } },
+    orderBy: { createdAt: 'desc' },
+    include: {
+      plugin: {
+        select: { id: true, slug: true, name: true, description: true },
+      },
+    },
+  })
+}

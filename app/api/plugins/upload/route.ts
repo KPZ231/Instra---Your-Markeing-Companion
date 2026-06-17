@@ -78,7 +78,8 @@ export async function POST(req: NextRequest) {
 
   try {
     await uploadBundle(slug.trim(), manifestResult.data.version, bundleCode);
-  } catch {
+  } catch (err) {
+    console.error("[upload] uploadBundle failed:", err);
     return NextResponse.json({ error: "Bundle upload failed" }, { status: 500 });
   }
 
@@ -96,6 +97,7 @@ export async function POST(req: NextRequest) {
     pluginId = plugin.id;
     versionId = version.id;
   } catch (err) {
+    console.error("[upload] createPlugin failed:", err);
     const msg = err instanceof Error ? err.message : "";
     if (msg.includes("already taken")) {
       return NextResponse.json({ error: msg }, { status: 400 });
@@ -105,7 +107,8 @@ export async function POST(req: NextRequest) {
 
   try {
     await submitVersionForReview(versionId);
-  } catch {
+  } catch (err) {
+    console.error("[upload] submitVersionForReview failed:", err);
     return NextResponse.json({ error: "Review submission failed" }, { status: 500 });
   }
 

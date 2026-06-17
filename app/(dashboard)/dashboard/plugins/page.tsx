@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { verifySession } from "@/lib/auth/dal";
-import { listApprovedPlugins } from "@/lib/plugins/registry";
+import { listApprovedPlugins, getUserSubmissions } from "@/lib/plugins/registry";
 import { getUserInstallations, getAvailableUpdate } from "@/lib/plugins/installations";
 import PluginCard from "@/components/dashboard/plugins/PluginCard";
+import MySubmissionsSection from "@/components/dashboard/plugins/MySubmissionsSection";
 import Link from "next/link";
 import type { PluginManifest } from "@/lib/plugins/manifest";
 
@@ -20,9 +21,10 @@ export const metadata: Metadata = {
 export default async function PluginsMarketplacePage() {
   const { user } = await verifySession();
 
-  const [approvedVersions, installations] = await Promise.all([
+  const [approvedVersions, installations, mySubmissions] = await Promise.all([
     listApprovedPlugins(),
     getUserInstallations(user.id),
+    getUserSubmissions(user.id),
   ]);
 
   const installedMap = new Map(
@@ -55,7 +57,10 @@ export default async function PluginsMarketplacePage() {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
+      {/* My Submissions */}
+      <MySubmissionsSection submissions={mySubmissions} />
+
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
