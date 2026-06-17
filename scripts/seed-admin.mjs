@@ -16,8 +16,12 @@ try {
   process.exit(1)
 }
 
-const EMAIL = 'admin@instra.site'
-const PASSWORD = 'Janusz1234121!'
+const EMAIL = process.env.ADMIN_SEED_EMAIL
+const PASSWORD = process.env.ADMIN_SEED_PASSWORD
+if (!EMAIL || !PASSWORD) {
+  console.error('Ustaw ADMIN_SEED_EMAIL i ADMIN_SEED_PASSWORD przed uruchomieniem skryptu')
+  process.exit(1)
+}
 
 async function main() {
   const existing = await prisma.user.findUnique({

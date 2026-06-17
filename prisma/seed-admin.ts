@@ -10,8 +10,11 @@ import * as bcrypt from 'bcryptjs'
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL ?? '' })
 const prisma = new PrismaClient({ adapter })
 
-const EMAIL = 'admin@instra.site'
-const PASSWORD = 'Janusz1234121!'
+const EMAIL = process.env.ADMIN_SEED_EMAIL
+const PASSWORD = process.env.ADMIN_SEED_PASSWORD
+if (!EMAIL || !PASSWORD) {
+  throw new Error('Set ADMIN_SEED_EMAIL and ADMIN_SEED_PASSWORD env variables before running this script')
+}
 
 async function main() {
   const existing = await prisma.user.findUnique({
