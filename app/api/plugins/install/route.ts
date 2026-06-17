@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { auth } from '@/lib/auth/config'
 import { installPlugin, uninstallPlugin, togglePlugin, getAvailableUpdate } from '@/lib/plugins/installations'
+import { prisma } from '@/lib/prisma'
+import { PluginReviewStatus } from '@prisma/client'
 
 const actionSchema = z.discriminatedUnion('action', [
   z.object({ action: z.literal('install'), pluginId: z.string(), pluginVersionId: z.string() }),
@@ -37,8 +39,24 @@ export async function POST(request: Request) {
   }
 
   try {
+    // Audit logging is delegated to the service layer: installPlugin, uninstallPlugin, togglePlugin,
+    // and getAvailableUpdate each call logPluginAction internally to record all user actions.
     switch (parsed.data.action) {
       case 'install': {
+        // Validate that the requested plugin version is approved before delegating to service layer
+        const version = await prisma.pluginVersion.findUnique({
+          where: { id: parsed.data.pluginVersionId },
+        })
+        if (
+          !version ||
+          version.status !== PluginReviewStatus.APPROVED ||
+          version.pluginId !== parsed.data.pluginId
+        ) {
+          return NextResponse.json(
+            { error: 'Version is not installable' },
+            { status: 400 },
+          )
+        }
         await installPlugin(userId, parsed.data.pluginId, parsed.data.pluginVersionId)
         return NextResponse.json({ ok: true })
       }
