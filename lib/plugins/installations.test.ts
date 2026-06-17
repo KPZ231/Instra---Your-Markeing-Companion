@@ -1,17 +1,27 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-const { upsert, deleteMany, update, findMany, versionFindFirst } = vi.hoisted(() => ({
-  upsert: vi.fn(),
+const {
+  create,
+  findUnique,
+  deleteMany,
+  update,
+  findMany,
+  versionFindUnique,
+  versionFindMany,
+} = vi.hoisted(() => ({
+  create: vi.fn(),
+  findUnique: vi.fn(),
   deleteMany: vi.fn(),
   update: vi.fn(),
   findMany: vi.fn(),
-  versionFindFirst: vi.fn(),
+  versionFindUnique: vi.fn(),
+  versionFindMany: vi.fn(),
 }))
 
 vi.mock('@/lib/prisma', () => ({
   prisma: {
-    pluginInstallation: { upsert, deleteMany, update, findMany },
-    pluginVersion: { findFirst: versionFindFirst },
+    pluginInstallation: { create, findUnique, deleteMany, update, findMany },
+    pluginVersion: { findUnique: versionFindUnique, findMany: versionFindMany },
   },
 }))
 
@@ -22,22 +32,45 @@ vi.mock('@/lib/plugins/audit', () => ({
 import { installPlugin, uninstallPlugin, togglePlugin, getUserInstallations, getAvailableUpdate } from './installations'
 
 beforeEach(() => {
-  upsert.mockReset()
+  create.mockReset()
+  findUnique.mockReset()
   deleteMany.mockReset()
   update.mockReset()
   findMany.mockReset()
-  versionFindFirst.mockReset()
+  versionFindUnique.mockReset()
+  versionFindMany.mockReset()
 })
 
 describe('plugin installations', () => {
   it('installs a specific approved version for a user', async () => {
-    upsert.mockResolvedValue({ id: 'inst-1' })
+    versionFindUnique.mockResolvedValue({ id: 'version-1', pluginId: 'plugin-1', status: 'APPROVED' })
+    findUnique.mockResolvedValue(null)
+    create.mockResolvedValue({ id: 'inst-1' })
+
     await installPlugin('user-1', 'plugin-1', 'version-1')
-    expect(upsert).toHaveBeenCalledWith({
-      where: { userId_pluginId: { userId: 'user-1', pluginId: 'plugin-1' } },
-      create: { userId: 'user-1', pluginId: 'plugin-1', pluginVersionId: 'version-1', enabled: true },
-      update: { pluginVersionId: 'version-1', enabled: true },
+
+    expect(create).toHaveBeenCalledWith({
+      data: { userId: 'user-1', pluginId: 'plugin-1', pluginVersionId: 'version-1', enabled: true },
     })
+  })
+
+  it('throws when version is not APPROVED', async () => {
+    versionFindUnique.mockResolvedValue({ id: 'version-1', pluginId: 'plugin-1', status: 'PENDING' })
+
+    await expect(installPlugin('user-1', 'plugin-1', 'version-1')).rejects.toThrow(
+      'is not approved',
+    )
+    expect(create).not.toHaveBeenCalled()
+  })
+
+  it('throws when plugin is already installed', async () => {
+    versionFindUnique.mockResolvedValue({ id: 'version-1', pluginId: 'plugin-1', status: 'APPROVED' })
+    findUnique.mockResolvedValue({ id: 'inst-existing' })
+
+    await expect(installPlugin('user-1', 'plugin-1', 'version-1')).rejects.toThrow(
+      'already installed',
+    )
+    expect(create).not.toHaveBeenCalled()
   })
 
   it('uninstalls by deleting the installation row', async () => {
@@ -64,8 +97,19 @@ describe('plugin installations', () => {
   })
 
   it('reports an available update when a newer approved version exists', async () => {
-    versionFindFirst.mockResolvedValue({ id: 'version-2', version: '1.1.0' })
+    versionFindMany.mockResolvedValue([
+      { id: 'version-2', version: '1.1.0', status: 'APPROVED' },
+      { id: 'version-3', version: '1.2.0', status: 'APPROVED' },
+    ])
     const result = await getAvailableUpdate('plugin-1', '1.0.0')
-    expect(result?.version).toBe('1.1.0')
+    expect(result?.version).toBe('1.2.0')
+  })
+
+  it('returns null when no version is actually newer (semver)', async () => {
+    versionFindMany.mockResolvedValue([
+      { id: 'version-old', version: '0.9.0', status: 'APPROVED' },
+    ])
+    const result = await getAvailableUpdate('plugin-1', '1.0.0')
+    expect(result).toBeNull()
   })
 })
