@@ -50,9 +50,11 @@ export async function POST(req: NextRequest) {
     "application/javascript",
     "text/javascript",
     "text/plain",
-    "application/octet-stream",
   ];
-  if (!bundleFile.name.endsWith(".js") || !ALLOWED_MIME.includes(bundleFile.type)) {
+  if (
+    !bundleFile.name.endsWith(".js") ||
+    (bundleFile.type !== "" && !ALLOWED_MIME.includes(bundleFile.type))
+  ) {
     return NextResponse.json({ error: "Bundle must be a .js file" }, { status: 400 });
   }
 
@@ -76,9 +78,8 @@ export async function POST(req: NextRequest) {
 
   try {
     await uploadBundle(slug.trim(), manifestResult.data.version, bundleCode);
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : "Unknown error";
-    return NextResponse.json({ error: `Bundle upload failed: ${msg}` }, { status: 400 });
+  } catch {
+    return NextResponse.json({ error: "Bundle upload failed" }, { status: 500 });
   }
 
   let pluginId: string;
@@ -95,15 +96,17 @@ export async function POST(req: NextRequest) {
     pluginId = plugin.id;
     versionId = version.id;
   } catch (err) {
-    const msg = err instanceof Error ? err.message : "Unknown error";
-    return NextResponse.json({ error: msg }, { status: 400 });
+    const msg = err instanceof Error ? err.message : "";
+    if (msg.includes("already taken")) {
+      return NextResponse.json({ error: msg }, { status: 400 });
+    }
+    return NextResponse.json({ error: "Plugin creation failed" }, { status: 500 });
   }
 
   try {
     await submitVersionForReview(versionId);
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : "Unknown error";
-    return NextResponse.json({ error: `Failed to submit for review: ${msg}` }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: "Review submission failed" }, { status: 500 });
   }
 
   return NextResponse.json({ pluginId, versionId }, { status: 201 });

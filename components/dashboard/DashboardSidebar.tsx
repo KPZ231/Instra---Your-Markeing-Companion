@@ -12,6 +12,7 @@ import {
   Zap,
   ShieldCheck,
 } from "lucide-react";
+import { UserRole } from "@/types/auth";
 
 interface NavItem {
   href: string;
@@ -31,7 +32,7 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 interface DashboardSidebarProps {
-  role?: string;
+  role?: UserRole;
 }
 
 /**
@@ -48,7 +49,7 @@ export default function DashboardSidebar({ role }: DashboardSidebarProps) {
   const pathname = usePathname();
 
   const visibleItems = NAV_ITEMS.filter(
-    (item) => !item.adminOnly || role === "ADMIN"
+    (item) => !item.adminOnly || role === UserRole.ADMIN
   );
 
   return (

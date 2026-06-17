@@ -32,6 +32,7 @@ export default function InstallButton({
   const router = useRouter();
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   /**
    * Sends an install or uninstall request to the API and refreshes the page on success.
@@ -39,6 +40,7 @@ export default function InstallButton({
    */
   async function handleAction(action: "install" | "uninstall") {
     setLoading(true);
+    setError(null);
     try {
       const body =
         action === "install"
@@ -53,8 +55,9 @@ export default function InstallButton({
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({})) as { error?: string };
-        console.error("Plugin action failed:", data.error);
+        setError(data.error ?? `${t("plugins.marketplace.install")} failed`);
       } else {
+        setError(null);
         router.refresh();
       }
     } finally {
@@ -64,47 +67,61 @@ export default function InstallButton({
 
   if (installed) {
     return (
-      <div className="flex gap-2">
-        {hasUpdate && (
+      <div className="flex flex-col gap-1">
+        <div className="flex gap-2">
+          {hasUpdate && (
+            <button
+              onClick={() => handleAction("install")}
+              disabled={loading}
+              className="px-3 py-1.5 rounded-sm font-mono text-xs tracking-[0.08em] uppercase transition-colors disabled:opacity-50"
+              style={{
+                background: "var(--color-success-green)",
+                color: "#000",
+              }}
+            >
+              {loading ? t("plugins.marketplace.installing") : t("plugins.marketplace.update_action")}
+            </button>
+          )}
           <button
-            onClick={() => handleAction("install")}
+            onClick={() => handleAction("uninstall")}
             disabled={loading}
-            className="px-3 py-1.5 rounded-sm font-mono text-xs tracking-[0.08em] uppercase transition-colors disabled:opacity-50"
+            className="px-3 py-1.5 rounded-sm font-mono text-xs tracking-[0.08em] uppercase border transition-colors disabled:opacity-50"
             style={{
-              background: "var(--color-success-green)",
-              color: "#000",
+              borderColor: "rgba(255,75,75,0.4)",
+              color: "#ffb4ab",
+              background: "transparent",
             }}
           >
-            {loading ? t("plugins.marketplace.installing") : t("plugins.marketplace.update_action")}
+            {loading ? t("plugins.marketplace.uninstalling") : t("plugins.marketplace.uninstall")}
           </button>
+        </div>
+        {error && (
+          <p className="font-mono text-[10px]" style={{ color: "#ffb4ab" }}>
+            {error}
+          </p>
         )}
-        <button
-          onClick={() => handleAction("uninstall")}
-          disabled={loading}
-          className="px-3 py-1.5 rounded-sm font-mono text-xs tracking-[0.08em] uppercase border transition-colors disabled:opacity-50"
-          style={{
-            borderColor: "rgba(255,75,75,0.4)",
-            color: "#ffb4ab",
-            background: "transparent",
-          }}
-        >
-          {loading ? t("plugins.marketplace.uninstalling") : t("plugins.marketplace.uninstall")}
-        </button>
       </div>
     );
   }
 
   return (
-    <button
-      onClick={() => handleAction("install")}
-      disabled={loading}
-      className="px-3 py-1.5 rounded-sm font-mono text-xs tracking-[0.08em] uppercase transition-colors disabled:opacity-50"
-      style={{
-        background: "var(--color-primary)",
-        color: "var(--color-on-primary)",
-      }}
-    >
-      {loading ? t("plugins.marketplace.installing") : t("plugins.marketplace.install")}
-    </button>
+    <div className="flex flex-col gap-1">
+      <button
+        onClick={() => handleAction("install")}
+        disabled={loading}
+        className="px-3 py-1.5 rounded-sm font-mono text-xs tracking-[0.08em] uppercase transition-colors disabled:opacity-50"
+        style={{
+          background: "var(--color-primary)",
+          color: "var(--color-on-primary)",
+        }}
+      >
+        {loading ? t("plugins.marketplace.installing") : t("plugins.marketplace.install")}
+      </button>
+      {error && (
+        <p className="font-mono text-[10px]" style={{ color: "#ffb4ab" }}>
+          {error}
+        </p>
+      )}
+    </div>
   );
 }
