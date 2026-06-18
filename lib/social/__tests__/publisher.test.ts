@@ -1,0 +1,82 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+
+vi.mock('server-only', () => ({}))
+vi.mock('../crypto', () => ({ decrypt: (v: string) => `decrypted:${v}` }))
+vi.mock('../meta', () => ({
+  publishToFacebook: vi.fn().mockResolvedValue('fb-123'),
+  publishToInstagram: vi.fn().mockResolvedValue('ig-456'),
+}))
+vi.mock('../linkedin', () => ({
+  publishToLinkedIn: vi.fn().mockResolvedValue('urn:li:ugcPost:789'),
+}))
+
+const mockPostFindUnique = vi.fn()
+const mockStatusUpsert = vi.fn()
+const mockAccountFindUnique = vi.fn()
+
+vi.mock('@/lib/prisma', () => ({
+  prisma: {
+    post: { findUnique: mockPostFindUnique },
+    socialPostStatus: { upsert: mockStatusUpsert },
+    socialAccount: { findUnique: mockAccountFindUnique },
+  },
+}))
+
+const { publishPost } = await import('../publisher')
+const { publishToFacebook } = await import('../meta')
+const { publishToLinkedIn } = await import('../linkedin')
+
+describe('publishPost', () => {
+  beforeEach(() => vi.clearAllMocks())
+
+  it('publishes to selected platforms and returns results', async () => {
+    mockPostFindUnique.mockResolvedValue({
+      id: 'post-1',
+      content: 'Hello',
+      platforms: ['FACEBOOK', 'LINKEDIN'],
+      media: [],
+    })
+    mockAccountFindUnique
+      .mockResolvedValueOnce({
+        platform: 'FACEBOOK',
+        accessToken: 'enc-fb',
+        pageAccessToken: 'enc-page',
+        pageId: 'page-1',
+        platformUserId: 'u1',
+        expiresAt: null,
+      })
+      .mockResolvedValueOnce({
+        platform: 'LINKEDIN',
+        accessToken: 'enc-li',
+        platformUserId: 'urn:li:person:abc',
+        expiresAt: null,
+        pageId: null,
+        pageAccessToken: null,
+      })
+    mockStatusUpsert.mockResolvedValue({})
+
+    const results = await publishPost('post-1', 'user-1')
+
+    expect(results).toHaveLength(2)
+    expect(results[0]).toMatchObject({ platform: 'FACEBOOK', success: true, platformPostId: 'fb-123' })
+    expect(results[1]).toMatchObject({ platform: 'LINKEDIN', success: true, platformPostId: 'urn:li:ugcPost:789' })
+    expect(publishToFacebook).toHaveBeenCalledWith('page-1', 'decrypted:enc-page', expect.objectContaining({ content: 'Hello' }))
+    expect(publishToLinkedIn).toHaveBeenCalledWith('urn:li:person:abc', 'decrypted:enc-li', expect.any(Object))
+  })
+
+  it('returns failed result when account not connected', async () => {
+    mockPostFindUnique.mockResolvedValue({
+      id: 'post-2', content: 'Hi', platforms: ['INSTAGRAM'], media: [],
+    })
+    mockAccountFindUnique.mockResolvedValue(null)
+    mockStatusUpsert.mockResolvedValue({})
+
+    const results = await publishPost('post-2', 'user-1')
+    expect(results[0]).toMatchObject({ platform: 'INSTAGRAM', success: false, error: 'Account not connected' })
+  })
+
+  it('throws when post not found', async () => {
+    mockPostFindUnique.mockResolvedValue(null)
+    await expect(publishPost('missing', 'user-1')).rejects.toThrow('Post not found')
+  })
+})
