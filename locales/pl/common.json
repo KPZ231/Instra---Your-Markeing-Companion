@@ -812,5 +812,27 @@
             "capabilities_label": "uprawnienia",
             "manifest_label": "Manifest"
         }
+    },
+    "posts": {
+        "like": "Lubię to",
+        "unlike": "Nie lubię",
+        "edit": "Edytuj",
+        "delete": "Usuń",
+        "delete_confirm": "Czy na pewno chcesz usunąć ten post?",
+        "composer": {
+            "placeholder": "Co słychać?",
+            "add_photo": "Dodaj zdjęcie",
+            "publish": "Opublikuj",
+            "save": "Zapisz zmiany",
+            "publishing": "Publikowanie...",
+            "cancel": "Anuluj",
+            "success": "Post opublikowany!",
+            "max_media_error": "Możesz dodać maksymalnie {{max}} zdjęcia na post."
+        },
+        "feed": {
+            "empty": "Brak postów. Bądź pierwszy!",
+            "load_more": "Załaduj więcej",
+            "loading": "Ładowanie..."
+        }
     }
 }
