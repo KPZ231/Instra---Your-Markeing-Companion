@@ -8,6 +8,7 @@ import Image from "next/image";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { FaCircleUser, FaBars, FaXmark, FaChevronDown } from "react-icons/fa6";
 import Button from "./Button";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 type AuthState = "loading" | "authenticated" | "unauthenticated";
 
@@ -106,6 +107,8 @@ export default function Navbar() {
 
         {/* Desktop auth */}
         <div className="hidden md:flex flex-row gap-3 items-center">
+          <LanguageSwitcher />
+
           {authState === "loading" && (
             <div className="w-7 h-7 rounded-full animate-pulse" style={{ background: "rgba(255,255,255,0.08)" }} />
           )}
@@ -245,6 +248,8 @@ export default function Navbar() {
             animate={isMobileMenuOpen ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.2, delay: isMobileMenuOpen ? navLinks.length * 0.04 : 0 }}
           >
+            <LanguageSwitcher />
+
             {authState === "unauthenticated" && (
               <>
                 <Button href="/signin" variant="secondary" className="w-full justify-center">{t("nav.singin")}</Button>
