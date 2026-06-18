@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 import { useTranslation } from 'react-i18next'
 import { PostCard } from './PostCard'
 import { loadMorePosts } from '@/features/posts'
@@ -37,6 +37,13 @@ export function PostFeed({
   const [posts, setPosts] = useState<FeedPost[]>(initialPosts)
   const [nextCursor, setNextCursor] = useState<string | null>(initialNextCursor)
   const [isPending, startTransition] = useTransition()
+
+  // Sync local state when the server refreshes the feed (e.g. after a new post).
+  // router.refresh() re-renders the server component, which passes new initialPosts here.
+  useEffect(() => {
+    setPosts(initialPosts)
+    setNextCursor(initialNextCursor)
+  }, [initialPosts, initialNextCursor])
 
   function handleLoadMore() {
     if (!nextCursor) return

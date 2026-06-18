@@ -1,6 +1,7 @@
 'use client'
 
 import { useActionState, useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { Textarea } from '@/components/ui/Textarea'
 import { MediaUploadPreview } from './MediaUploadPreview'
@@ -39,6 +40,7 @@ const INITIAL_STATE: PostActionState = {}
  * <PostComposer mode="full" existingPost={post} />
  */
 export function PostComposer({ mode, existingPost }: PostComposerProps) {
+  const router = useRouter()
   const { t } = useTranslation()
 
   const [expanded, setExpanded] = useState(mode === 'full')
@@ -70,7 +72,7 @@ export function PostComposer({ mode, existingPost }: PostComposerProps) {
     input.files = dt.files
   }, [newFiles])
 
-  // Reset the form after a successful submission.
+  // Reset form and refresh server data after a successful submission.
   useEffect(() => {
     if (state.success) {
       setContent('')
@@ -79,8 +81,10 @@ export function PostComposer({ mode, existingPost }: PostComposerProps) {
       if (mode === 'inline') {
         setExpanded(false)
       }
+      // Trigger a server re-render so PostFeed receives the new post immediately.
+      router.refresh()
     }
-  }, [state.success, existingPost, mode])
+  }, [state.success, existingPost, mode, router])
 
   /** Handles file selection from the trigger input and merges into state */
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
