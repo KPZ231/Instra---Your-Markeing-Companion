@@ -1,4 +1,8 @@
 {
+    "lang": {
+        "en": "English",
+        "pl": "Polski"
+    },
     "nav": {
         "home": "Strona główna",
         "about": "O nas",
