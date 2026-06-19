@@ -1,7 +1,5 @@
 'use client'
 
-import { useTranslation } from 'react-i18next'
-
 interface SocialStatusBadgeProps {
   platform: string
   status: string
@@ -26,7 +24,6 @@ const STATUS_COLORS: Record<string, string> = {
  * <SocialStatusBadge platform="LINKEDIN" status="PUBLISHED" error={null} />
  */
 export function SocialStatusBadge({ platform, status, error }: SocialStatusBadgeProps) {
-  const { t } = useTranslation()
   const color = STATUS_COLORS[status] ?? 'var(--color-outline)'
   const label = platform.charAt(0) + platform.slice(1).toLowerCase()
 
