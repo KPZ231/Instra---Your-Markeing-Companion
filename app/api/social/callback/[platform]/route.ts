@@ -20,12 +20,12 @@ const PLATFORM_MAP: Record<string, SocialPlatform> = {
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: { platform: string } },
+  { params }: { params: Promise<{ platform: string }> },
 ): Promise<NextResponse> {
   const session = await auth()
   if (!session?.user?.id) return NextResponse.redirect(new URL('/signin', req.url))
 
-  const platform = params.platform.toLowerCase()
+  const platform = (await params).platform.toLowerCase()
   const socialPlatform = PLATFORM_MAP[platform]
   if (!socialPlatform) return NextResponse.redirect(new URL('/dashboard/settings/social?error=unsupported', req.url))
 

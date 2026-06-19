@@ -19,12 +19,12 @@ const PLATFORM_MAP: Record<string, SocialPlatform> = {
  */
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { platform: string } },
+  { params }: { params: Promise<{ platform: string }> },
 ): Promise<NextResponse> {
   const session = await auth()
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const platform = PLATFORM_MAP[params.platform.toLowerCase()]
+  const platform = PLATFORM_MAP[(await params).platform.toLowerCase()]
   if (!platform) return NextResponse.json({ error: 'Unsupported platform' }, { status: 400 })
 
   try {

@@ -27,14 +27,14 @@ const SCOPES: Record<string, string> = {
  */
 export async function GET(
   req: NextRequest,
-  { params }: { params: { platform: string } },
+  { params }: { params: Promise<{ platform: string }> },
 ): Promise<NextResponse> {
   const session = await auth()
   if (!session?.user?.id) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const platform = params.platform.toLowerCase()
+  const platform = (await params).platform.toLowerCase()
   const oauthUrl = OAUTH_URLS[platform]
   if (!oauthUrl) {
     return NextResponse.json({ error: 'Unsupported platform' }, { status: 400 })
