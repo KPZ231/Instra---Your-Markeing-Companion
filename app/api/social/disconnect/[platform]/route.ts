@@ -30,7 +30,11 @@ export async function DELETE(
   try {
     await deleteSocialAccount(session.user.id, platform)
     return NextResponse.json({ success: true })
-  } catch {
-    return NextResponse.json({ error: 'Account not found' }, { status: 404 })
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('Record to delete does not exist')) {
+      return NextResponse.json({ error: 'Account not found' }, { status: 404 })
+    }
+    console.error('Disconnect error:', error)
+    return NextResponse.json({ error: 'Failed to disconnect account' }, { status: 500 })
   }
 }

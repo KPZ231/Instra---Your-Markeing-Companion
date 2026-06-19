@@ -122,10 +122,17 @@ async function handleMeta(
   const appId = process.env.META_APP_ID!
   const appSecret = process.env.META_APP_SECRET!
 
-  // Short-lived token
-  const tokenRes = await fetch(
-    `https://graph.facebook.com/v19.0/oauth/access_token?client_id=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}&client_secret=${appSecret}&code=${code}`,
-  )
+  // Short-lived token — POST keeps secrets and code out of URL/logs
+  const tokenRes = await fetch('https://graph.facebook.com/v19.0/oauth/access_token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      client_id: appId,
+      client_secret: appSecret,
+      redirect_uri: redirectUri,
+      code,
+    }),
+  })
   if (!tokenRes.ok) throw new Error('Meta token exchange failed')
   const tokenData = (await tokenRes.json()) as { access_token: string }
 
@@ -180,6 +187,10 @@ async function handleMeta(
     const igProfileRes = await fetch(
       `https://graph.facebook.com/v19.0/${igId}?fields=username&access_token=${page.access_token}`,
     )
+    if (!igProfileRes.ok) {
+      const err = (await igProfileRes.json()) as { error?: { message?: string } }
+      throw new Error(err.error?.message ?? `Instagram profile fetch failed: ${igProfileRes.status}`)
+    }
     const igProfile = (await igProfileRes.json()) as { username: string }
 
     await upsertSocialAccount({
