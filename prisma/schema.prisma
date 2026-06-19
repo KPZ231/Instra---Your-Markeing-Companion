@@ -113,6 +113,8 @@ enum WidgetSlot {
   SETTINGS_ADVANCED
   HEADER_ACTIONS
   PROFILE_MENU
+  POST_COMPOSER_SIDEBAR
+  POST_CARD_ACTIONS
 }
 
 model Plugin {
@@ -204,9 +206,10 @@ model Post {
   authorId  String
   author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   media     Media[]
-  likes          Like[]
-  socialStatuses SocialPostStatus[]
-  createdAt      DateTime @default(now())
+  likes           Like[]
+  socialStatuses  SocialPostStatus[]
+  metricSnapshots PostMetricSnapshot[]
+  createdAt       DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
   @@index([authorId])
@@ -299,4 +302,24 @@ model UsernameChange {
   createdAt   DateTime @default(now())
 
   @@index([userId, createdAt])
+}
+
+/// Time-series snapshot of a post's engagement metrics.
+/// One snapshot per capture interval (e.g. daily/hourly) per platform.
+/// platform = null means an aggregate across all platforms.
+model PostMetricSnapshot {
+  id          String    @id @default(cuid())
+  postId      String
+  post        Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  platform    Platform?
+  impressions Int       @default(0)
+  reach       Int       @default(0)
+  views       Int       @default(0)
+  clicks      Int       @default(0)
+  shares      Int       @default(0)
+  comments    Int       @default(0)
+  capturedAt  DateTime  @default(now())
+
+  @@index([postId, capturedAt])
+  @@index([capturedAt])
 }

@@ -719,7 +719,8 @@
             "schedule": "Schedule",
             "plugins": "Plugins",
             "settings": "Settings",
-            "profile": "Profile"
+            "profile": "Profile",
+            "social": "Social"
         },
         "header": {
             "search": "Search...",
@@ -731,19 +732,26 @@
         },
         "stats": {
             "posts": "Posts Published",
+            "likes": "Total Likes",
+            "accounts": "Connected Accounts",
             "reach": "Total Reach",
-            "engagement": "Avg. Engagement",
-            "followers": "Followers Growth",
-            "vsLastWeek": "vs last week"
+            "vsLastWeek": "vs last week",
+            "noData": "No data yet"
         },
         "chart": {
             "label": "// ANALYTICS",
-            "title": "Engagement Rate",
-            "aria": "Engagement rate chart"
+            "title": "Posts Over Time",
+            "aria": "Posts over time chart",
+            "empty": "No posts yet — publish something to see your chart"
         },
         "activity": {
             "label": "// ACTIVITY",
-            "title": "Recent Activity"
+            "title": "Recent Activity",
+            "published": "Published · {{platform}}",
+            "failed": "Failed · {{platform}}",
+            "pending": "Pending · {{platform}}",
+            "processing": "Processing · {{platform}}",
+            "empty": "No activity yet — publish a post to get started"
         },
         "quickActions": {
             "label": "// ACTIONS",
@@ -759,6 +767,89 @@
             "hint": "DASHBOARD_TOP — install a plugin to use this slot"
         },
         "adminNav": "Admin"
+    },
+    "analytics": {
+        "page": {
+            "title": "Post Analytics",
+            "description": "Track performance, engagement trends, and get content improvement tips for your posts."
+        },
+        "overview": {
+            "label": "// ANALYTICS OVERVIEW",
+            "heading": "Your Analytics"
+        },
+        "stats": {
+            "impressions": "Impressions",
+            "reach": "Reach",
+            "views": "Views",
+            "likes": "Total Likes",
+            "comments": "Comments",
+            "shares": "Shares",
+            "clicks": "Clicks",
+            "engagementRate": "Engagement Rate",
+            "vsLastPeriod": "vs previous period"
+        },
+        "chart": {
+            "label": "// ENGAGEMENT TREND",
+            "title": "Engagement Over Time",
+            "aria": "Engagement over time chart with prediction",
+            "prediction": "Prediction",
+            "confidence": {
+                "high": "High confidence",
+                "medium": "Medium confidence",
+                "low": "Low confidence (add more posts)"
+            },
+            "empty": "No metric data yet — record your first snapshot to see the chart"
+        },
+        "tip": {
+            "label": "// DAILY TIP",
+            "title": "Today's Tip",
+            "priority": {
+                "high": "High priority",
+                "medium": "Medium priority",
+                "low": "Low priority"
+            },
+            "relatedPost": "Related post"
+        },
+        "posts": {
+            "label": "// YOUR POSTS",
+            "title": "Post Performance",
+            "empty": "No posts yet — publish your first post to see analytics.",
+            "score": "Content Score",
+            "engagement": "Engagement",
+            "viewDetails": "Details"
+        },
+        "detail": {
+            "label": "// POST DETAIL",
+            "back": "← Back to Analytics",
+            "published": "Published",
+            "platforms": "Platforms"
+        },
+        "issues": {
+            "no_content": "Your post has no text content.",
+            "content_too_short": "Post text is too short ({{length}} chars). Aim for at least 30 characters.",
+            "content_too_long": "Post text is very long ({{length}} chars). Consider shortening for better readability.",
+            "no_media": "Add an image or video to boost engagement.",
+            "no_hashtags": "No hashtags detected. Add relevant hashtags to increase discoverability.",
+            "too_many_hashtags": "Too many hashtags ({{count}}). Aim for 5–15 for optimal reach.",
+            "no_platforms": "Post has no platforms selected.",
+            "single_platform": "Post is only on one platform. Consider cross-posting to reach more people.",
+            "poor_timing": "Post was published at {{hour}}:00 — outside peak engagement hours (7:00–22:00).",
+            "no_cta": "No call-to-action detected. Encourage your audience to act."
+        },
+        "tips": {
+            "no_posts": "Publish your first post to start getting personalised analytics tips.",
+            "all_good": "Great job! All your recent posts score well. Keep up the quality.",
+            "no_content": "Try adding text content to your next post — posts with captions get significantly more engagement.",
+            "content_too_short": "Your post text is very short. Expand it to at least 30 characters to give your audience more context.",
+            "content_too_long": "Consider shortening your post text for better readability on mobile.",
+            "no_media": "Posts with images or videos receive on average 2–3× more engagement. Add media to your next post.",
+            "no_hashtags": "Add 5–15 relevant hashtags to your posts to reach a broader audience.",
+            "too_many_hashtags": "Reduce your hashtag count to 5–15 per post — too many can look spammy.",
+            "no_platforms": "Select at least one platform before publishing to make your post live.",
+            "single_platform": "Cross-post to multiple platforms to maximise your content's reach.",
+            "poor_timing": "Try scheduling your next post between 7:00 and 22:00 for higher visibility.",
+            "no_cta": "End your post with a clear call-to-action — ask your audience a question or invite them to click a link."
+        }
     },
     "account": {
         "profile": {
@@ -790,6 +881,34 @@
             "confirm_label": "Type your username to confirm",
             "confirm_placeholder": "your-username",
             "confirm_action": "Permanently delete account"
+        }
+    },
+    "posts": {
+        "composer": {
+            "placeholder": "What's on your mind?",
+            "placeholder_instagram": "Write your Instagram caption...",
+            "placeholder_facebook": "What's happening on Facebook?",
+            "placeholder_twitter": "What's happening?",
+            "placeholder_tiktok": "Write your TikTok description...",
+            "placeholder_linkedin": "Share professional insights...",
+            "placeholder_youtube": "Describe your YouTube video...",
+            "platforms_label": "Platforms",
+            "composing_for": "Composing for {{platform}}",
+            "limit_exceeded_warning": "Content exceeds {{platform}}'s limit of {{limit}} characters.",
+            "multi_platform_limit_note": "Most restrictive limit: {{platform}} ({{limit}} chars)",
+            "char_counter_label": "{{current}} of {{max}} characters",
+            "platform_fields": {
+                "section_label_single": "Platform settings",
+                "section_label_multi": "Per-platform settings"
+            },
+            "existing_media_alt": "Media {{n}}",
+            "remove_media_label": "Remove media {{n}}",
+            "add_photo": "Add photo",
+            "cancel": "Cancel",
+            "publish": "Publish",
+            "publishing": "Publishing...",
+            "save": "Save",
+            "success": "Post published successfully."
         }
     },
     "plugins": {

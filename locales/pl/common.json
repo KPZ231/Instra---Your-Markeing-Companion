@@ -719,7 +719,8 @@
             "schedule": "Harmonogram",
             "plugins": "Pluginy",
             "settings": "Ustawienia",
-            "profile": "Profil"
+            "profile": "Profil",
+            "social": "Social"
         },
         "header": {
             "search": "Szukaj...",
@@ -731,19 +732,26 @@
         },
         "stats": {
             "posts": "Opublikowane posty",
+            "likes": "Łączne polubienia",
+            "accounts": "Połączone konta",
             "reach": "Łączny zasięg",
-            "engagement": "Śr. zaangażowanie",
-            "followers": "Wzrost obserwujących",
-            "vsLastWeek": "vs poprzedni tydzień"
+            "vsLastWeek": "vs poprzedni tydzień",
+            "noData": "Brak danych"
         },
         "chart": {
             "label": "// ANALITYKA",
-            "title": "Wskaźnik zaangażowania",
-            "aria": "Wykres wskaźnika zaangażowania"
+            "title": "Posty w czasie",
+            "aria": "Wykres postów w czasie",
+            "empty": "Brak postów — opublikuj coś, aby zobaczyć wykres"
         },
         "activity": {
             "label": "// AKTYWNOŚĆ",
-            "title": "Ostatnia aktywność"
+            "title": "Ostatnia aktywność",
+            "published": "Opublikowano · {{platform}}",
+            "failed": "Błąd · {{platform}}",
+            "pending": "Oczekuje · {{platform}}",
+            "processing": "Przetwarzanie · {{platform}}",
+            "empty": "Brak aktywności — opublikuj post, aby zacząć"
         },
         "quickActions": {
             "label": "// AKCJE",
@@ -759,6 +767,89 @@
             "hint": "DASHBOARD_TOP — zainstaluj plugin aby użyć tego slotu"
         },
         "adminNav": "Admin"
+    },
+    "analytics": {
+        "page": {
+            "title": "Analityka postów",
+            "description": "Śledź wyniki, trendy zaangażowania i otrzymuj wskazówki dotyczące poprawy treści Twoich postów."
+        },
+        "overview": {
+            "label": "// PRZEGLĄD ANALITYKI",
+            "heading": "Twoja Analityka"
+        },
+        "stats": {
+            "impressions": "Wyświetlenia",
+            "reach": "Zasięg",
+            "views": "Obejrzenia",
+            "likes": "Łączne polubienia",
+            "comments": "Komentarze",
+            "shares": "Udostępnienia",
+            "clicks": "Kliknięcia",
+            "engagementRate": "Współczynnik zaangażowania",
+            "vsLastPeriod": "vs poprzedni okres"
+        },
+        "chart": {
+            "label": "// TREND ZAANGAŻOWANIA",
+            "title": "Zaangażowanie w czasie",
+            "aria": "Wykres zaangażowania w czasie z prognozą",
+            "prediction": "Prognoza",
+            "confidence": {
+                "high": "Wysoka pewność",
+                "medium": "Średnia pewność",
+                "low": "Niska pewność (dodaj więcej postów)"
+            },
+            "empty": "Brak danych metryk — zapisz pierwszy snapshot, aby zobaczyć wykres"
+        },
+        "tip": {
+            "label": "// PORADA DNIA",
+            "title": "Porada dnia",
+            "priority": {
+                "high": "Wysoki priorytet",
+                "medium": "Średni priorytet",
+                "low": "Niski priorytet"
+            },
+            "relatedPost": "Powiązany post"
+        },
+        "posts": {
+            "label": "// TWOJE POSTY",
+            "title": "Wyniki postów",
+            "empty": "Brak postów — opublikuj swój pierwszy post, aby zobaczyć analitykę.",
+            "score": "Ocena treści",
+            "engagement": "Zaangażowanie",
+            "viewDetails": "Szczegóły"
+        },
+        "detail": {
+            "label": "// SZCZEGÓŁY POSTA",
+            "back": "← Wróć do Analityki",
+            "published": "Opublikowano",
+            "platforms": "Platformy"
+        },
+        "issues": {
+            "no_content": "Twój post nie ma treści tekstowej.",
+            "content_too_short": "Tekst posta jest zbyt krótki ({{length}} zn.). Celuj w minimum 30 znaków.",
+            "content_too_long": "Tekst posta jest bardzo długi ({{length}} zn.). Rozważ skrócenie dla lepszej czytelności.",
+            "no_media": "Dodaj zdjęcie lub wideo, aby zwiększyć zaangażowanie.",
+            "no_hashtags": "Nie wykryto hashtagów. Dodaj odpowiednie hashtagi, aby zwiększyć zasięg.",
+            "too_many_hashtags": "Za dużo hashtagów ({{count}}). Celuj w 5–15 dla optymalnego zasięgu.",
+            "no_platforms": "Post nie ma wybranych platform.",
+            "single_platform": "Post jest tylko na jednej platformie. Rozważ cross-posting, by dotrzeć do większej liczby osób.",
+            "poor_timing": "Post został opublikowany o {{hour}}:00 — poza szczytem zaangażowania (7:00–22:00).",
+            "no_cta": "Nie wykryto wezwania do działania. Zachęć odbiorców do reakcji."
+        },
+        "tips": {
+            "no_posts": "Opublikuj swój pierwszy post, aby zacząć otrzymywać spersonalizowane wskazówki analityczne.",
+            "all_good": "Świetna robota! Wszystkie ostatnie posty mają wysoką ocenę. Utrzymaj jakość.",
+            "no_content": "Spróbuj dodać tekst do następnego posta — posty z opisem uzyskują znacznie więcej zaangażowania.",
+            "content_too_short": "Tekst posta jest bardzo krótki. Rozwiń go do co najmniej 30 znaków, by dać odbiorcom więcej kontekstu.",
+            "content_too_long": "Rozważ skrócenie tekstu posta dla lepszej czytelności na urządzeniach mobilnych.",
+            "no_media": "Posty ze zdjęciami lub filmami otrzymują średnio 2–3× więcej zaangażowania. Dodaj media do następnego posta.",
+            "no_hashtags": "Dodaj 5–15 trafnych hashtagów do postów, aby dotrzeć do szerszego grona odbiorców.",
+            "too_many_hashtags": "Zmniejsz liczbę hashtagów do 5–15 na post — zbyt wiele może wyglądać jak spam.",
+            "no_platforms": "Wybierz przynajmniej jedną platformę przed publikacją, aby post był widoczny.",
+            "single_platform": "Publikuj na wielu platformach, aby zmaksymalizować zasięg treści.",
+            "poor_timing": "Spróbuj zaplanować następny post między 7:00 a 22:00, by uzyskać większą widoczność.",
+            "no_cta": "Zakończ post wyraźnym wezwaniem do działania — zadaj pytanie lub zaproś do kliknięcia linku."
+        }
     },
     "account": {
         "profile": {
@@ -790,6 +881,34 @@
             "confirm_label": "Wpisz swoją nazwę użytkownika, aby potwierdzić",
             "confirm_placeholder": "twoja-nazwa",
             "confirm_action": "Trwale usuń konto"
+        }
+    },
+    "posts": {
+        "composer": {
+            "placeholder": "Co masz na myśli?",
+            "placeholder_instagram": "Napisz podpis do Instagrama...",
+            "placeholder_facebook": "Co się dzieje na Facebooku?",
+            "placeholder_twitter": "Co się dzieje?",
+            "placeholder_tiktok": "Napisz opis TikToka...",
+            "placeholder_linkedin": "Podziel się profesjonalnymi przemyśleniami...",
+            "placeholder_youtube": "Opisz swój film na YouTube...",
+            "platforms_label": "Platformy",
+            "composing_for": "Tworzysz dla {{platform}}",
+            "limit_exceeded_warning": "Treść przekracza limit {{platform}} wynoszący {{limit}} znaków.",
+            "multi_platform_limit_note": "Najbardziej restrykcyjny limit: {{platform}} ({{limit}} znaków)",
+            "char_counter_label": "{{current}} z {{max}} znaków",
+            "platform_fields": {
+                "section_label_single": "Ustawienia platformy",
+                "section_label_multi": "Ustawienia per platforma"
+            },
+            "existing_media_alt": "Media {{n}}",
+            "remove_media_label": "Usuń media {{n}}",
+            "add_photo": "Dodaj zdjęcie",
+            "cancel": "Anuluj",
+            "publish": "Opublikuj",
+            "publishing": "Publikowanie...",
+            "save": "Zapisz",
+            "success": "Post opublikowany pomyślnie."
         }
     },
     "plugins": {

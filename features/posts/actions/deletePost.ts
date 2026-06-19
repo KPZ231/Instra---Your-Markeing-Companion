@@ -36,6 +36,8 @@ export async function deletePost(postId: string): Promise<void> {
 
   await invalidatePrefix('db', 'feed')
   await invalidatePrefix('db', 'profile', post.authorId)
+  await invalidatePrefix('db', 'analytics')
   revalidatePath('/dashboard')
   revalidatePath('/feed')
+  revalidatePath('/dashboard/analytics')
 }

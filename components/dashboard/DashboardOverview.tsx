@@ -6,13 +6,12 @@ import StatCard from "@/components/dashboard/StatCard";
 import AnalyticsChart from "@/components/dashboard/AnalyticsChart";
 import ActivityFeed from "@/components/dashboard/ActivityFeed";
 import QuickActions from "@/components/dashboard/QuickActions";
+import type { DashboardMetrics } from "@/lib/api/dashboardMetrics";
 
-const STATS = [
-  { id: "posts", labelKey: "dashboard.stats.posts", value: "142", delta: 8.3, deltaLabelKey: "dashboard.stats.vsLastWeek" },
-  { id: "reach", labelKey: "dashboard.stats.reach", value: "1.2M", delta: 14.7, deltaLabelKey: "dashboard.stats.vsLastWeek" },
-  { id: "engagement", labelKey: "dashboard.stats.engagement", value: "4.8%", delta: -1.2, deltaLabelKey: "dashboard.stats.vsLastWeek" },
-  { id: "followers", labelKey: "dashboard.stats.followers", value: "+2,340", delta: 22.1, deltaLabelKey: "dashboard.stats.vsLastWeek" },
-];
+interface DashboardOverviewProps {
+  /** Metrics payload from getDashboardMetrics() */
+  metrics: DashboardMetrics;
+}
 
 const stagger: Variants = {
   hidden: {},
@@ -27,11 +26,15 @@ const fadeUp: Variants = {
 /**
  * Dashboard overview — assembles the full bento-grid layout with KPI cards,
  * analytics chart, activity feed, and quick-action panel.
+ * Receives real metrics from the server component to avoid any client-side
+ * data fetching.
+ *
+ * @param metrics - Dashboard metrics payload from getDashboardMetrics()
  *
  * @example
- * <DashboardOverview />
+ * <DashboardOverview metrics={metrics} />
  */
-export default function DashboardOverview() {
+export default function DashboardOverview({ metrics }: DashboardOverviewProps) {
   const { t } = useTranslation();
 
   return (
@@ -59,7 +62,7 @@ export default function DashboardOverview() {
         initial="hidden"
         animate="show"
       >
-        {STATS.map((s) => (
+        {metrics.stats.map((s) => (
           <motion.div key={s.id} variants={fadeUp}>
             <StatCard
               label={t(s.labelKey)}
@@ -79,10 +82,10 @@ export default function DashboardOverview() {
         animate="show"
       >
         <motion.div className="lg:col-span-3" variants={fadeUp}>
-          <AnalyticsChart />
+          <AnalyticsChart series={metrics.chartSeries} />
         </motion.div>
         <motion.div className="lg:col-span-1" variants={fadeUp}>
-          <ActivityFeed />
+          <ActivityFeed items={metrics.activity} />
         </motion.div>
       </motion.div>
 

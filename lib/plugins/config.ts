@@ -8,6 +8,8 @@ export const WIDGET_SLOT_CAPABILITY: Record<WidgetSlot, string> = {
   SETTINGS_ADVANCED: 'widgets:settings:advanced',
   HEADER_ACTIONS: 'widgets:header:actions',
   PROFILE_MENU: 'widgets:profile:menu',
+  POST_COMPOSER_SIDEBAR: 'widgets:post:composer:sidebar',
+  POST_CARD_ACTIONS: 'widgets:post:card:actions',
 }
 
 export const PLUGIN_CAPABILITIES = [

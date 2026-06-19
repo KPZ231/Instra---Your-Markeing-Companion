@@ -93,8 +93,10 @@ export async function createPost(
 
   await invalidatePrefix('db', 'feed')
   await invalidatePrefix('db', 'profile', user.id)
+  await invalidatePrefix('db', 'analytics')
   revalidatePath('/dashboard')
   revalidatePath('/feed')
+  revalidatePath('/dashboard/analytics')
 
   return { success: true }
 }

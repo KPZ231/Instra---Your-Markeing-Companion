@@ -41,6 +41,8 @@ export async function toggleLike(postId: string): Promise<void> {
   }
 
   await invalidatePrefix('db', 'feed')
+  await invalidatePrefix('db', 'analytics')
   revalidatePath('/dashboard')
   revalidatePath('/feed')
+  revalidatePath('/dashboard/analytics')
 }
