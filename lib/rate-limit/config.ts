@@ -16,11 +16,12 @@ export const RATE_LIMIT_PRESETS = {
   register:       { limit: 3,  window: '10 m' },
   forgotPassword: { limit: 3,  window: '15 m' },
   verifyEmail:    { limit: 10, window: '5 m'  },
-  resendCode:     { limit: 2,  window: '1 m'  },
-  createPost:     { limit: 10, window: '1 h'  },
-  toggleLike:     { limit: 60, window: '1 m'  },
-  publishPost:    { limit: 10, window: '1 h'  },
-  socialConnect:  { limit: 5,  window: '15 m' },
+  resendCode:      { limit: 2,  window: '1 m'  },
+  createPost:      { limit: 10, window: '1 h'  },
+  toggleLike:      { limit: 60, window: '1 m'  },
+  publishPost:     { limit: 10, window: '1 h'  },
+  socialConnect:   { limit: 5,  window: '15 m' },
+  changeUsername:  { limit: 5,  window: '1 h'  },
 } satisfies Record<string, RateLimitPreset>
 
 export type RateLimitPresetKey = keyof typeof RATE_LIMIT_PRESETS

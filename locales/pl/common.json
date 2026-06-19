@@ -1,9 +1,4 @@
 {
-    "lang": {
-        "en": "English",
-        "pl": "Polski",
-        "switcher_label": "Zmień język"
-    },
     "nav": {
         "home": "Strona główna",
         "about": "O nas",
@@ -724,7 +719,7 @@
             "schedule": "Harmonogram",
             "plugins": "Pluginy",
             "settings": "Ustawienia",
-            "social": "Social Media"
+            "profile": "Profil"
         },
         "header": {
             "search": "Szukaj...",
@@ -764,6 +759,38 @@
             "hint": "DASHBOARD_TOP — zainstaluj plugin aby użyć tego slotu"
         },
         "adminNav": "Admin"
+    },
+    "account": {
+        "profile": {
+            "title": "Mój profil",
+            "edit_link": "Edytuj w ustawieniach"
+        },
+        "settings": {
+            "title": "Ustawienia konta"
+        },
+        "username": {
+            "label": "Nazwa użytkownika",
+            "section_title": "Zmień nazwę użytkownika",
+            "helper": "Pozostało {{remaining}} z 3 zmian w tym roku",
+            "limit_reached": "Osiągnąłeś limit 3 zmian nazwy użytkownika w ciągu roku.",
+            "taken": "Ta nazwa użytkownika jest już zajęta",
+            "save": "Zapisz nazwę",
+            "success": "Nazwa użytkownika została zaktualizowana"
+        },
+        "export": {
+            "title": "Eksport danych konta",
+            "description": "Pobierz wszystkie dane konta jako plik JSON.",
+            "button": "Pobierz dane (JSON)",
+            "loading": "Przygotowywanie eksportu..."
+        },
+        "delete": {
+            "title": "Usuń konto",
+            "warning": "Ta akcja jest nieodwracalna. Wszystkie Twoje posty, połączenia social i dane zostaną usunięte.",
+            "button": "Usuń moje konto",
+            "confirm_label": "Wpisz swoją nazwę użytkownika, aby potwierdzić",
+            "confirm_placeholder": "twoja-nazwa",
+            "confirm_action": "Trwale usuń konto"
+        }
     },
     "plugins": {
         "marketplace": {
@@ -817,46 +844,6 @@
             "author_label": "autor",
             "capabilities_label": "uprawnienia",
             "manifest_label": "Manifest"
-        }
-    },
-    "social": {
-        "connect": "Połącz",
-        "disconnect": "Rozłącz",
-        "connected_as": "Połączono jako @{{username}}",
-        "not_connected": "Nie połączono",
-        "expires": "Wygasa",
-        "publish": "Opublikuj na social media",
-        "publishing": "Publikowanie…",
-        "disconnect_error": "Nie udało się rozłączyć. Spróbuj ponownie.",
-        "connect_success": "Konto zostało połączone.",
-        "settings": {
-            "title": "Konta Social Media"
-        }
-    },
-    "posts": {
-        "like": "Lubię to",
-        "unlike": "Nie lubię",
-        "edit": "Edytuj",
-        "delete": "Usuń",
-        "delete_confirm": "Czy na pewno chcesz usunąć ten post?",
-        "composer": {
-            "placeholder": "Co słychać?",
-            "add_photo": "Dodaj zdjęcie",
-            "publish": "Opublikuj",
-            "save": "Zapisz zmiany",
-            "publishing": "Publikowanie...",
-            "cancel": "Anuluj",
-            "success": "Post opublikowany!",
-            "max_media_error": "Możesz dodać maksymalnie {{max}} zdjęcia na post.",
-            "char_counter_label": "Liczba znaków: {{current}} / {{max}}",
-            "existing_media_alt": "Istniejące media #{{n}}",
-            "remove_media_label": "Usuń media #{{n}}",
-            "platforms_label": "Publikuj na"
-        },
-        "feed": {
-            "empty": "Brak postów. Bądź pierwszy!",
-            "load_more": "Załaduj więcej",
-            "loading": "Ładowanie..."
         }
     }
 }

@@ -31,9 +31,10 @@ model User {
   pluginData          PluginData[]
   reviewedVersions    PluginVersion[]      @relation
 
-  posts          Post[]
-  likes          Like[]
-  socialAccounts SocialAccount[]
+  posts           Post[]
+  likes           Like[]
+  socialAccounts  SocialAccount[]
+  usernameChanges UsernameChange[]
 }
 
 model Account {
@@ -287,4 +288,15 @@ model SocialPostStatus {
 
   @@unique([postId, platform])
   @@index([postId])
+}
+
+model UsernameChange {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  oldUsername String?
+  newUsername String
+  createdAt   DateTime @default(now())
+
+  @@index([userId, createdAt])
 }
