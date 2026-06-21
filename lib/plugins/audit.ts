@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 
 /**
@@ -15,7 +16,7 @@ export async function logPluginAction(
   metadata?: Record<string, unknown>,
 ): Promise<void> {
   await prisma.pluginAuditLog.create({
-    data: { pluginId, userId, action, metadata: metadata ?? null },
+    data: { pluginId, userId, action, metadata: (metadata ?? Prisma.JsonNull) as Prisma.NullableJsonNullValueInput | Prisma.InputJsonValue },
   })
 }
 

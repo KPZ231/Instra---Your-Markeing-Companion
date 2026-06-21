@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useTranslation } from 'react-i18next'
 import { Textarea } from '@/components/ui/Textarea'
 import { MediaUploadPreview } from './MediaUploadPreview'
+import { AiCaptionButton } from './AiCaptionButton'
 import { PlatformSelector, type PlatformId, PLATFORMS } from './PlatformSelector'
 import {
   PlatformFields,
@@ -44,7 +45,8 @@ const INITIAL_STATE: PostActionState = {}
  */
 export function PostComposer({ mode, existingPost }: PostComposerProps) {
   const router = useRouter()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const language = (i18n.language?.startsWith('pl') ? 'pl' : 'en') as 'pl' | 'en'
 
   const [expanded, setExpanded] = useState(mode === 'full')
   const [content, setContent] = useState(existingPost?.content ?? '')
@@ -76,7 +78,9 @@ export function PostComposer({ mode, existingPost }: PostComposerProps) {
   // Reset after successful submission
   useEffect(() => {
     if (state.success) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setContent('')
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setNewFiles([])
       setPlatforms([])
       setPlatformData({})
@@ -394,6 +398,11 @@ export function PostComposer({ mode, existingPost }: PostComposerProps) {
                   </label>
                 </>
               )}
+              <AiCaptionButton
+                prompt={content}
+                language={language}
+                onGenerated={setContent}
+              />
             </div>
 
             <div className="flex items-center gap-3">

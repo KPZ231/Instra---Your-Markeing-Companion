@@ -108,7 +108,7 @@ export default async function PostAnalyticsDetailPage(
             className="font-mono text-xs tracking-[0.1em] uppercase"
             style={{ color: 'var(--color-on-surface-variant)' }}
           >
-            // CONTENT SCORE
+            {'// CONTENT SCORE'}
           </p>
           <span
             className="font-mono text-2xl font-semibold tabular-nums"

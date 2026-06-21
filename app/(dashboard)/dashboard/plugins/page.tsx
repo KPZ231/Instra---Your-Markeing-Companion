@@ -68,7 +68,7 @@ export default async function PluginsMarketplacePage() {
             className="font-mono text-xs tracking-[0.12em] uppercase mb-1"
             style={{ color: "var(--color-on-surface-variant)" }}
           >
-            // MARKETPLACE
+            {'// MARKETPLACE'}
           </p>
           <h1
             className="font-sans text-2xl font-semibold"

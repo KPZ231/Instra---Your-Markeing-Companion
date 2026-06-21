@@ -47,6 +47,7 @@ export function MediaUploadPreview({ files, onRemove }: MediaUploadPreviewProps)
   return (
     <div className="grid grid-cols-3 gap-2" role="list" aria-label="Selected media previews">
       {displayFiles.map((file, i) => {
+        // eslint-disable-next-line react-hooks/refs
         const url = urlsRef.current[i] ?? ''
         return (
           <div

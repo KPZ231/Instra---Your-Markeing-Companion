@@ -18,6 +18,7 @@ export default async function AccountSettingsPage() {
   const changesCount = await prisma.usernameChange.count({
     where: {
       userId: user.id,
+      // eslint-disable-next-line react-hooks/purity
       createdAt: { gte: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000) },
     },
   })

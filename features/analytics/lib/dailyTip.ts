@@ -4,7 +4,7 @@
  * Returns an i18n key — no hardcoded strings.
  */
 
-import type { DailyTip, ContentScore, PostAnalytics } from '../types'
+import type { DailyTip, PostAnalytics } from '../types'
 
 /**
  * Builds the daily tip from the scored post list.

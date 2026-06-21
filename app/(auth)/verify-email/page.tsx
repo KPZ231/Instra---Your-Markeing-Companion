@@ -51,6 +51,7 @@ function VerifyEmailForm() {
 
   // Start cooldown on initial load (code was just sent by registerUser)
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     startCooldown()
     return () => {
       if (cooldownRef.current) clearInterval(cooldownRef.current)
@@ -71,6 +72,7 @@ function VerifyEmailForm() {
   useEffect(() => {
     if (resendState.success) {
       toast.success(t('verify_email.resend_success'))
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       startCooldown()
     }
     if (resendState.errors?._form?.length) {

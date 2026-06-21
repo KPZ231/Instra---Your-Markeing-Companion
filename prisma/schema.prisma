@@ -35,6 +35,7 @@ model User {
   likes           Like[]
   socialAccounts  SocialAccount[]
   usernameChanges UsernameChange[]
+  campaigns       Campaign[]
 }
 
 model Account {
@@ -303,6 +304,63 @@ model UsernameChange {
 
   @@index([userId, createdAt])
 }
+
+// ─── Campaigns ───────────────────────────────────────────────────────────────
+
+enum CampaignAction {
+  PUBLISH_POST
+  WEBHOOK
+}
+
+enum CampaignStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+  FAILED
+}
+
+/**
+ * A recurring automated marketing task.
+ * Runs `totalRuns` times, once every `intervalMinutes` minutes.
+ * The cron worker polls WHERE status=ACTIVE AND nextRunAt<=now.
+ */
+model Campaign {
+  id              String         @id @default(cuid())
+  userId          String
+  name            String
+  actionType      CampaignAction
+  /// Handler-specific config: { postId } for PUBLISH_POST, { url, method?, body? } for WEBHOOK
+  payload         Json
+  intervalMinutes Int
+  totalRuns       Int
+  completedRuns   Int            @default(0)
+  status          CampaignStatus @default(ACTIVE)
+  nextRunAt       DateTime
+  lastRunAt       DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  user User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  runs CampaignRun[]
+
+  @@index([status, nextRunAt]) // tani polling crona
+  @@index([userId])
+}
+
+/** Immutable log of each campaign execution attempt. */
+model CampaignRun {
+  id         String   @id @default(cuid())
+  campaignId String
+  runAt      DateTime @default(now())
+  success    Boolean
+  error      String?  @db.Text
+
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@index([campaignId])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 /// Time-series snapshot of a post's engagement metrics.
 /// One snapshot per capture interval (e.g. daily/hourly) per platform.

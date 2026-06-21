@@ -45,7 +45,7 @@ export default function MySubmissionsSection({
         className="font-mono text-xs tracking-[0.12em] uppercase"
         style={{ color: "var(--color-on-surface-variant)" }}
       >
-        // MY SUBMISSIONS
+        {'// MY SUBMISSIONS'}
       </p>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3">

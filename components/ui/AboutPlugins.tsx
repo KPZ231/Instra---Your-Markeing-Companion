@@ -13,7 +13,6 @@ interface PluginItem {
   icon: string;
 }
 
-interface AboutPluginsProps {}
 
 /* ── Framer Motion variants ─────────────────────────────────────── */
 
@@ -164,7 +163,7 @@ function ModelDiagram({ labelFree, labelPro }: { readonly labelFree: string; rea
  * @example
  * <AboutPlugins />
  */
-export default function AboutPlugins(_props: AboutPluginsProps) {
+export default function AboutPlugins() {
   const { t } = useTranslation();
   const headerRef = useRef<HTMLDivElement>(null);
   const headerInView = useInView(headerRef, { once: true, margin: "-60px" });

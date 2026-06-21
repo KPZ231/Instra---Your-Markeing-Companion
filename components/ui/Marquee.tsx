@@ -53,7 +53,7 @@ export const TestimonialCard = ({ testimonial }: { testimonial: Testimonial }) =
         style={{ clipPath: "polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px))" }}
       >
         <p className="text-body-lg text-on-surface mb-8 font-serif italic">
-          "{t(quoteKey)}"
+          &quot;{t(quoteKey)}&quot;
         </p>
 
         <div className="flex flex-col gap-1">

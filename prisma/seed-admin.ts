@@ -34,7 +34,7 @@ async function main() {
       console.log('✅ Już jest ADMIN')
     }
   } else {
-    const passwordHash = await bcrypt.hash(PASSWORD, 12)
+    const passwordHash = await bcrypt.hash(PASSWORD!, 12)
     const user = await prisma.user.create({
       data: {
         email: EMAIL,

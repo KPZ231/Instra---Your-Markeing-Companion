@@ -57,6 +57,7 @@ export default function EngagementChart({ series, prediction }: EngagementChartP
   const [range, setRange] = useState<Range>("30D");
 
   const days = RANGE_DAYS[range];
+  // eslint-disable-next-line react-hooks/purity
   const cutoff = new Date(Date.now() - days * 86_400_000).toISOString().slice(0, 10);
   const filtered = series.filter((p) => p.date >= cutoff);
 

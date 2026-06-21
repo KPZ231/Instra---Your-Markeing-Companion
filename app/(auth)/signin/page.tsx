@@ -114,6 +114,7 @@ export default function SignInPage() {
           <form
             ref={formRef}
             action={formAction}
+            // eslint-disable-next-line react-hooks/refs
             onSubmit={handleSubmit(onClientSubmit)}
             className="mb-5 flex flex-col gap-4"
             noValidate

@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 
 /**
@@ -30,7 +31,7 @@ export async function setPluginData(
 ): Promise<void> {
   await prisma.pluginData.upsert({
     where: { pluginId_userId_key: { pluginId, userId, key } },
-    create: { pluginId, userId, key, value },
-    update: { value },
+    create: { pluginId, userId, key, value: value as Prisma.InputJsonValue },
+    update: { value: value as Prisma.InputJsonValue },
   })
 }

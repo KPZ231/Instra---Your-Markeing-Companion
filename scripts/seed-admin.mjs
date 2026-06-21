@@ -3,7 +3,6 @@
  * Uruchom: node scripts/seed-admin.mjs
  */
 import { PrismaClient, UserRole } from '@prisma/client'
-import { createHash } from 'crypto'
 
 const prisma = new PrismaClient()
 

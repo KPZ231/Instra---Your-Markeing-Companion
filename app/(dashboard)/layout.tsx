@@ -1,6 +1,7 @@
 import { verifySession } from "@/lib/auth/dal";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import Image from "next/image";
 
 /**
  * Dashboard shell — server component.
@@ -21,12 +22,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
         }}
       >
         {/* Logo */}
-        <span
-          className="font-mono text-xs tracking-[0.12em] uppercase shrink-0 select-none"
-          style={{ color: "var(--color-on-surface-variant)" }}
-        >
-          // INSTRA
-        </span>
+        <Image
+          className="shrink-0 select-none"
+          src="/images/logos/logo_white_No_Subtitle_Transparent_Wide.png"
+          alt="Logo"
+          width={120}
+          height={32}
+        />
 
         {/* Pill nav — centred, takes all remaining space */}
         <div className="flex flex-1 justify-center min-w-0">
@@ -38,7 +40,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
       </header>
 
       {/* ── Main content ── */}
-      <main className="flex-1 overflow-y-auto p-6 lg:p-8">{children}</main>
+      <main className="flex-1 overflow-y-auto">
+        <div className="mx-auto w-full max-w-5xl px-6 py-8 lg:px-10 lg:py-10">
+          {children}
+        </div>
+      </main>
     </div>
   );
 }

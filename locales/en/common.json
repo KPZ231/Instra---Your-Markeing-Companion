@@ -720,7 +720,9 @@
             "plugins": "Plugins",
             "settings": "Settings",
             "profile": "Profile",
-            "social": "Social"
+            "social": "Social",
+            "openMenu": "Open navigation menu",
+            "closeMenu": "Close navigation menu"
         },
         "header": {
             "search": "Search...",
@@ -908,7 +910,13 @@
             "publish": "Publish",
             "publishing": "Publishing...",
             "save": "Save",
-            "success": "Post published successfully."
+            "success": "Post published successfully.",
+            "ai": {
+                "generate": "Generate",
+                "generating": "Generating...",
+                "generate_aria": "Generate caption with AI",
+                "error": "Failed to generate caption. Please try again."
+            }
         }
     },
     "plugins": {
@@ -963,6 +971,135 @@
             "author_label": "author",
             "capabilities_label": "capabilities",
             "manifest_label": "Manifest"
+        }
+    },
+    "campaigns": {
+        "page": {
+            "eyebrow": "// CAMPAIGNS",
+            "title": "Campaigns",
+            "empty": "No campaigns yet — create one to get started",
+            "new": "+ New Campaign"
+        },
+        "new": {
+            "eyebrow": "// NEW CAMPAIGN",
+            "title": "New Campaign",
+            "save": "Create Campaign",
+            "saving": "Creating..."
+        },
+        "status": {
+            "active": "Active",
+            "paused": "Paused",
+            "completed": "Completed",
+            "failed": "Failed"
+        },
+        "filter": {
+            "all": "All",
+            "active": "Active",
+            "paused": "Paused",
+            "completed": "Completed",
+            "failed": "Failed"
+        },
+        "action": {
+            "publish_post": "Publish Post",
+            "webhook": "Webhook"
+        },
+        "field": {
+            "name": "Campaign Name",
+            "name_placeholder": "e.g. Weekly Promotion",
+            "action_type": "Action Type",
+            "post_id": "Post ID",
+            "post_id_placeholder": "Enter post ID",
+            "url": "Webhook URL",
+            "url_placeholder": "https://example.com/webhook",
+            "method": "HTTP Method",
+            "body": "Request Body (optional)",
+            "body_placeholder": "{ \"key\": \"value\" }",
+            "interval": "Interval (minutes)",
+            "total_runs": "Total Runs",
+            "start_at": "Start At (optional)",
+            "start_at_hint": "Leave empty to start immediately",
+            "name_help": "A short, recognizable label for your campaign (max 100 chars).",
+            "action_type_help": "Choose what this campaign does on each run.",
+            "posts": "Posts",
+            "posts_help": "Select one or more of your posts to publish automatically.",
+            "posts_empty": "You have no posts yet. Create a post first, then set up a campaign.",
+            "posts_selected": "{{count}} post selected",
+            "posts_selected_plural": "{{count}} posts selected",
+            "url_help": "The endpoint that receives an HTTP request on each run. Must use https or http.",
+            "method_help": "HTTP verb sent to the webhook. POST is recommended for most use cases.",
+            "body_help": "Optional JSON body sent with POST/PUT/PATCH requests.",
+            "interval_help": "How often the campaign runs. Minimum 1 minute. Use the presets above for common intervals.",
+            "total_runs_help": "Total number of times this campaign will execute before it completes (1–10,000).",
+            "start_at_help": "Schedule the first run for a future date and time. Leave empty to start immediately.",
+            "posts_search": "Search posts…",
+            "posts_no_results": "No posts match your search",
+            "no_content": "(no text content)"
+        },
+        "interval_preset": {
+            "15m": "15m",
+            "1h": "1h",
+            "6h": "6h",
+            "24h": "24h"
+        },
+        "actions": {
+            "pause": "Pause",
+            "resume": "Resume",
+            "delete": "Delete",
+            "history": "History",
+            "hide_history": "Hide",
+            "pausing": "Pausing...",
+            "resuming": "Resuming...",
+            "deleting": "Deleting..."
+        },
+        "progress": "{{done}}/{{total}} runs",
+        "next_run": "Next run",
+        "last_run": "Last run",
+        "interval_label": "every {{minutes}}m",
+        "runs": {
+            "title": "Run History",
+            "empty": "No runs yet",
+            "success": "Success",
+            "failed": "Failed",
+            "at": "at"
+        },
+        "confirm_delete": {
+            "title": "Delete Campaign",
+            "description": "This will permanently delete the campaign and all its run history. This cannot be undone.",
+            "label": "Type the campaign name to confirm",
+            "confirm": "Delete Campaign"
+        },
+        "toast": {
+            "paused": "Campaign paused",
+            "resumed": "Campaign resumed",
+            "deleted": "Campaign deleted",
+            "created": "Campaign created successfully"
+        }
+    },
+    "schedule": {
+        "label": "// SCHEDULE",
+        "heading": "Post Calendar",
+        "prev_month": "Previous month",
+        "next_month": "Next month",
+        "today": "Today",
+        "weekdays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+        "empty_day": "No posts this day.",
+        "schedule_post": "Schedule a post",
+        "pick_post": "Pick a post",
+        "pick_time": "Date & time",
+        "submit_schedule": "Schedule",
+        "scheduling": "Scheduling…",
+        "reschedule": "Reschedule",
+        "rescheduling": "Rescheduling…",
+        "cancel_post": "Cancel",
+        "cancel_title": "Cancel scheduled post",
+        "cancel_description": "The post will not be published at the scheduled time. You can reschedule it anytime from the Campaigns page.",
+        "cancel_confirm": "Cancel post",
+        "more": "+{{count}} more",
+        "published_on": "Published on {{platforms}}",
+        "toast": {
+            "scheduled": "Post scheduled",
+            "rescheduled": "Post rescheduled",
+            "cancelled": "Scheduled post cancelled"
         }
     }
 }

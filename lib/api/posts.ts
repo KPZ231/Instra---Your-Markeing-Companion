@@ -75,6 +75,32 @@ async function getCurrentUserId(): Promise<string | null> {
  * @example
  * const { posts, nextCursor } = await getFeed()
  */
+/** Minimal post shape for campaign post selector. */
+export type UserPostOption = {
+  id: string
+  content: string | null
+  platforms: string[]
+  createdAt: Date
+}
+
+/**
+ * Returns all posts authored by a user, newest first, for use in selectors.
+ *
+ * @param userId - The post author's user ID
+ * @returns Array of UserPostOption (no media, no like state)
+ *
+ * @example
+ * const posts = await getUserPosts(user.id)
+ */
+export async function getUserPosts(userId: string): Promise<UserPostOption[]> {
+  return prisma.post.findMany({
+    where: { authorId: userId },
+    select: { id: true, content: true, platforms: true, createdAt: true },
+    orderBy: { createdAt: 'desc' },
+    take: 100,
+  })
+}
+
 export async function getFeed(
   cursor?: string,
 ): Promise<{ posts: FeedPost[]; nextCursor: string | null }> {

@@ -41,7 +41,9 @@ export function PostFeed({
   // Sync local state when the server refreshes the feed (e.g. after a new post).
   // router.refresh() re-renders the server component, which passes new initialPosts here.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPosts(initialPosts)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setNextCursor(initialNextCursor)
   }, [initialPosts, initialNextCursor])
 

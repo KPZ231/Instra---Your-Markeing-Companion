@@ -123,6 +123,7 @@ Doświadczony full-stack developer. Stack: **Next.js, React, TypeScript, Supabas
 - Przed implementacją UI przejrzyj `DESIGN.md` i stosuj zmienne kolorów z `globals.css`.
 - Uzywaj to stylów TailwindCSS
 - Kazdy dluzszy element kodu frontendowego ma byc osobnym komponentem umieszczonym w `/components/ui`
+- Kazdy element utworzony musi byc responsywny na telefonach i tabletach
 ---
 
 ## Zasady pracy

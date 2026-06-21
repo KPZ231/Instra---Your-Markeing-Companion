@@ -147,6 +147,7 @@ function ResetPasswordForm() {
       <form
         ref={formRef}
         action={formAction}
+        // eslint-disable-next-line react-hooks/refs
         onSubmit={handleSubmit(onClientSubmit)}
         className="mb-5 flex flex-col gap-4"
         noValidate
@@ -320,7 +321,7 @@ export default function ResetPasswordPage() {
               Your account is safe with us.
             </h2>
             <p className="mb-3 max-w-100 text-[15px] leading-relaxed text-outline">
-              Choose a strong password you haven't used before. We recommend a mix of letters, numbers, and symbols.
+              Choose a strong password you haven&apos;t used before. We recommend a mix of letters, numbers, and symbols.
             </p>
             <p className="m-0 font-mono text-[12px] tracking-[0.02em] text-outline-variant">
               AES-256 encryption · SOC 2 compliant

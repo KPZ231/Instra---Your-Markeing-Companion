@@ -1,9 +1,7 @@
-import { DefaultSession, DefaultJWT } from 'next-auth'
+import type { DefaultSession } from 'next-auth'
+import { UserRole } from '@prisma/client'
 
-export enum UserRole {
-  USER = 'USER',
-  ADMIN = 'ADMIN',
-}
+export { UserRole }
 
 export type SessionUser = {
   id: string
@@ -17,12 +15,5 @@ declare module 'next-auth' {
 
   interface User {
     role?: UserRole
-  }
-}
-
-declare module 'next-auth/jwt' {
-  interface JWT extends DefaultJWT {
-    id: string
-    role: UserRole
   }
 }

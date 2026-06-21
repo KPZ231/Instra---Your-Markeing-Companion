@@ -73,7 +73,7 @@ export const PricingPlans = () => {
         {planKeys.map((key, idx) => {
           // Pobieramy plan z JSON
           const rawPlan = t(`pricing.plans.${key}`, { returnObjects: true });
-          const plan: PricingPlan = typeof rawPlan === 'object' && rawPlan !== null ? (rawPlan as PricingPlan) : null as any;
+          const plan: PricingPlan | null = typeof rawPlan === 'object' && rawPlan !== null ? (rawPlan as PricingPlan) : null;
 
           if (!plan) return null;
 

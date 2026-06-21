@@ -720,7 +720,9 @@
             "plugins": "Pluginy",
             "settings": "Ustawienia",
             "profile": "Profil",
-            "social": "Social"
+            "social": "Social",
+            "openMenu": "Otwórz menu nawigacyjne",
+            "closeMenu": "Zamknij menu nawigacyjne"
         },
         "header": {
             "search": "Szukaj...",
@@ -908,7 +910,13 @@
             "publish": "Opublikuj",
             "publishing": "Publikowanie...",
             "save": "Zapisz",
-            "success": "Post opublikowany pomyślnie."
+            "success": "Post opublikowany pomyślnie.",
+            "ai": {
+                "generate": "Generuj",
+                "generating": "Generowanie...",
+                "generate_aria": "Generuj podpis z AI",
+                "error": "Nie udało się wygenerować podpisu. Spróbuj ponownie."
+            }
         }
     },
     "plugins": {
@@ -963,6 +971,135 @@
             "author_label": "autor",
             "capabilities_label": "uprawnienia",
             "manifest_label": "Manifest"
+        }
+    },
+    "campaigns": {
+        "page": {
+            "eyebrow": "// KAMPANIE",
+            "title": "Kampanie",
+            "empty": "Brak kampanii — utwórz pierwszą, aby zacząć",
+            "new": "+ Nowa kampania"
+        },
+        "new": {
+            "eyebrow": "// NOWA KAMPANIA",
+            "title": "Nowa kampania",
+            "save": "Utwórz kampanię",
+            "saving": "Tworzenie..."
+        },
+        "status": {
+            "active": "Aktywna",
+            "paused": "Wstrzymana",
+            "completed": "Zakończona",
+            "failed": "Błąd"
+        },
+        "filter": {
+            "all": "Wszystkie",
+            "active": "Aktywne",
+            "paused": "Wstrzymane",
+            "completed": "Zakończone",
+            "failed": "Błędy"
+        },
+        "action": {
+            "publish_post": "Publikacja posta",
+            "webhook": "Webhook"
+        },
+        "field": {
+            "name": "Nazwa kampanii",
+            "name_placeholder": "np. Promocja tygodniowa",
+            "action_type": "Typ akcji",
+            "post_id": "ID posta",
+            "post_id_placeholder": "Wpisz ID posta",
+            "url": "URL webhooka",
+            "url_placeholder": "https://example.com/webhook",
+            "method": "Metoda HTTP",
+            "body": "Treść żądania (opcjonalnie)",
+            "body_placeholder": "{ \"klucz\": \"wartość\" }",
+            "interval": "Interwał (minuty)",
+            "total_runs": "Liczba uruchomień",
+            "start_at": "Czas startu (opcjonalnie)",
+            "start_at_hint": "Zostaw puste, aby zacząć natychmiast",
+            "name_help": "Krótka, rozpoznawalna nazwa kampanii (maks. 100 znaków).",
+            "action_type_help": "Wybierz, co kampania robi przy każdym uruchomieniu.",
+            "posts": "Posty",
+            "posts_help": "Wybierz jeden lub więcej swoich postów do automatycznej publikacji.",
+            "posts_empty": "Nie masz jeszcze żadnych postów. Utwórz posta, a potem skonfiguruj kampanię.",
+            "posts_selected": "{{count}} post wybrany",
+            "posts_selected_plural": "{{count}} posty wybrane",
+            "url_help": "Adres URL, który otrzymuje żądanie HTTP przy każdym uruchomieniu. Musi używać https lub http.",
+            "method_help": "Metoda HTTP wysyłana do webhooka. POST jest zalecana w większości przypadków.",
+            "body_help": "Opcjonalna treść JSON wysyłana z żądaniami POST/PUT/PATCH.",
+            "interval_help": "Jak często kampania się uruchamia. Minimum 1 minuta. Użyj presetów powyżej dla typowych interwałów.",
+            "total_runs_help": "Łączna liczba uruchomień kampanii przed jej zakończeniem (1–10 000).",
+            "start_at_help": "Zaplanuj pierwsze uruchomienie na przyszłą datę i godzinę. Zostaw puste, aby zacząć natychmiast.",
+            "posts_search": "Szukaj postów…",
+            "posts_no_results": "Brak wyników dla tego zapytania",
+            "no_content": "(brak treści)"
+        },
+        "interval_preset": {
+            "15m": "15m",
+            "1h": "1h",
+            "6h": "6h",
+            "24h": "24h"
+        },
+        "actions": {
+            "pause": "Wstrzymaj",
+            "resume": "Wznów",
+            "delete": "Usuń",
+            "history": "Historia",
+            "hide_history": "Ukryj",
+            "pausing": "Wstrzymywanie...",
+            "resuming": "Wznawianie...",
+            "deleting": "Usuwanie..."
+        },
+        "progress": "{{done}}/{{total}} uruchomień",
+        "next_run": "Następne uruchomienie",
+        "last_run": "Ostatnie uruchomienie",
+        "interval_label": "co {{minutes}} min",
+        "runs": {
+            "title": "Historia uruchomień",
+            "empty": "Brak uruchomień",
+            "success": "Sukces",
+            "failed": "Błąd",
+            "at": "o"
+        },
+        "confirm_delete": {
+            "title": "Usuń kampanię",
+            "description": "Trwale usunie kampanię i całą historię uruchomień. Nie można cofnąć tej operacji.",
+            "label": "Wpisz nazwę kampanii, aby potwierdzić",
+            "confirm": "Usuń kampanię"
+        },
+        "toast": {
+            "paused": "Kampania wstrzymana",
+            "resumed": "Kampania wznowiona",
+            "deleted": "Kampania usunięta",
+            "created": "Kampania utworzona pomyślnie"
+        }
+    },
+    "schedule": {
+        "label": "// HARMONOGRAM",
+        "heading": "Kalendarz postów",
+        "prev_month": "Poprzedni miesiąc",
+        "next_month": "Następny miesiąc",
+        "today": "Dziś",
+        "weekdays": ["Pon", "Wt", "Śr", "Czw", "Pt", "Sob", "Nd"],
+        "empty_day": "Brak postów tego dnia.",
+        "schedule_post": "Zaplanuj post",
+        "pick_post": "Wybierz post",
+        "pick_time": "Data i godzina",
+        "submit_schedule": "Zaplanuj",
+        "scheduling": "Planowanie…",
+        "reschedule": "Przesuń",
+        "rescheduling": "Przesuwanie…",
+        "cancel_post": "Anuluj",
+        "cancel_title": "Anuluj zaplanowany post",
+        "cancel_description": "Post nie zostanie opublikowany o zaplanowanej godzinie. Możesz go ponownie zaplanować na stronie Kampanie.",
+        "cancel_confirm": "Anuluj post",
+        "more": "+{{count}} więcej",
+        "published_on": "Opublikowano na {{platforms}}",
+        "toast": {
+            "scheduled": "Post zaplanowany",
+            "rescheduled": "Post przesunięty",
+            "cancelled": "Zaplanowany post anulowany"
         }
     }
 }
